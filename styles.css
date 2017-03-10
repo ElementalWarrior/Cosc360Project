@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css?family=Lato');
+@import url('font-awesome.min.css');
+h1,
+h2,
+h3,
+h4,
+h5 {
+	margin-top: 0;
+}
+#posts article {
+	background: #f8f8f8;
+	border-top: 4px solid #e33;
+	box-shadow: 0 6px 6px -4px rgba(0,0,0,0.1);
+	padding: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+#posts h3 {
+	margin-bottom: 0;
+}
+author {
+	color: #aaa;
+	display: block;
+	font-size: 0.7rem;
+	font-family: Lato, arial, helvetica, 'sans-serif';
+	margin-top: -0.2rem;
+}
+.post-right {
+	color: #ccc;
+	font-family: Lato;
+	float: right;
+	text-shadow: 1px 1px rgba(255,255,255,0.4);
+}
+#post-header {
+	padding: 0.5rem;
+}
+.replies {
+	display: inline-block;
+	margin-top: 4px;
+}
+.clearfix::after {
+	clear: both;
+	display: table;
+	content: '';
+}
