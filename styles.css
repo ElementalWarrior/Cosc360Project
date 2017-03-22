@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Lato');
-@import url('font-awesome.min.css');
 
+/************************ Styles shared on every page *************************/
 a {
 	color: #ee0000;
 	text-decoration: none;
@@ -19,6 +19,9 @@ h4,
 h5 {
 	margin-top: 0;
 }
+p {
+	margin-top: 0;
+}
 .text-center {
 	text-align: center;
 }
@@ -27,9 +30,13 @@ h5 {
 	display: table;
 	content: '';
 }
-input {
+input[type=text],
+input[type=password],
+input[type=email],
+textarea {
 	background: #f8f8f8;
 	border: 1px solid #ddd;
+	box-shadow: inset 0 2px 2px -1px rgba(0,0,0,0.1);
 	padding: 0.25rem;
 }
 header {
@@ -39,16 +46,26 @@ header {
 	padding-bottom: 30px;
 	position: relative;
 }
+header input {
+	position: relative;
+	top:-2px;
+}
 footer {
 	border-top: 4px solid #ee0000;
 	box-shadow: 0px -11px 6px -8px rgba(0,0,0,0.1);
-	margin-top: 30px;
+	padding: 20px;
+}
+#breadcrumbs {
+	margin-top: 0.5rem;
+	width: 100%;
+}
+#breadcrumbs ul {
+	list-style: none inside;
+	margin: 0;
+	padding: 0;
 }
 nav {
-	bottom: 0;
-	position: absolute;
-	right: 0;
-
+	text-align: right;
 }
 nav ul {
 	list-style: none inside;
@@ -68,52 +85,83 @@ nav li a {
 nav li a:hover {
 	border-color: #FFA552;
 }
+/* using flexbox allows the styling that switches between one/two column very
+simple, I simply need to include an element as a child of the <main> with a
+fixed width */
 @media screen and (min-width: 768px) {
 	main {
-		display: flex;
 		flex-direction: row;
 	}
 	#sidebar {
-		margin-right: 5px;
+		margin-right: 1rem;
 		width: 320px;
 	}
 	#posts {
 		flex: 1;
 	}
 }
+main {
+	background: #fafafa;
+	display: flex;
+	flex-wrap: wrap;
+	padding-bottom: 30px;
+}
+body {
+	margin: 0;
+}
+header,
+main {
+	padding: 0 0.5rem;
+}
+main > * {
+	width: 100%;
+}
+/************************ home page styles *************************/
 #posts {
 	margin-top: 35px;
 }
 #posts article,
-#sidebar article {
-	background: #f8f8f8;
+#sidebar article,
+.post {
+	background: #fff;
 	border-top: 4px solid #FFA552;
 	box-shadow: 0 6px 6px -4px rgba(0,0,0,0.1);
 	padding: 0.5rem;
 	margin-bottom: 0.5rem;
 }
+#sidebar article {
+	border-color: #ac52ff;
+}
 #sidebar {
 	margin-top: 35px;
 }
+@media screen and (max-width: 767px) {
+	#sidebar {
+		width: 100%;
+	}
+}
 #sidebar h2 {
-	background: #fff7e4;
-  border-bottom: 4px solid #FFA552;
-  margin-left: -0.5rem;
-  margin-right: -0.5rem;
+	background: #f1e4ff;
+	border-bottom: 4px solid #ac52ff;
+	margin-left: -0.5rem;
+	margin-right: -0.5rem;
 	margin-top:-0.5rem;
 	padding: 0.5rem;
 }
 #posts h3 {
 	margin-bottom: 0;
 }
-author {
+.author {
 	color: #aaa;
 	display: block;
-	font-size: 0.7rem;
 	font-family: Lato, arial, helvetica, 'sans-serif';
+	font-size: 0.7rem;
+	font-weight: normal;
+}
+.thread-right .author {
 	margin-top: -0.2rem;
 }
-.post-right {
+.thread-right {
 	color: #ccc;
 	font-family: Lato;
 	float: right;
@@ -126,9 +174,60 @@ author {
 	display: inline-block;
 	margin-top: 4px;
 }
-#login {
-	margin: 30px auto;
+/************************ single column centered  *************************/
+.single-centered form{
+	float: left;
+	margin: 30px 50%;
+	transform: translateX(-50%);
 }
-#login input {
+.single-centered  form > div
+ {
 	margin-bottom: 10px;
+}
+/************************ register page  *************************/
+#register input[type=text],
+#register input[type=password],
+#register input[type=email] {
+	width: 100%;
+}
+#image-upload div {
+	margin-bottom: 5px;
+}
+#image-upload input {
+	color: #666;
+}
+/************************ thread page  *************************/
+#thread {
+	margin-top: 35px;
+	flex: 1;
+}
+.thread-content > h3 {
+	background: #fff7e4;
+	border: 4px solid #FFA552;
+	border-width: 4px 0;
+	margin: 0;
+	padding: 0.5rem;
+}
+.thread-content p {
+	background: #fffcf4;
+	border: 1px solid #fff2e7;
+    margin: 0;
+    padding: 20px;
+}
+.response-by {
+	font-size: 0.8rem;
+}
+.post p {
+	margin-top: 20px;
+}
+#respond {
+	background: #fff;
+	border-top: 4px solid #FFA552;
+	box-shadow: 0px 11px 6px -8px rgba(0,0,0,0.1);
+	padding: 0.5rem;
+}
+#respond textarea {
+	box-sizing: border-box;
+	resize: none;
+	width: 100%;
 }

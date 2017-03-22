@@ -8,11 +8,26 @@
 	<body>
 		<?php include("header.php") ?>
 		<main>
+			<!-- <div id="breadcrumbs">
+				<ul>
+					<li>
+						<a href="#">Home</a>
+					</li>
+				</ul>
+			</div> -->
 			<?php
 			$path = $_SERVER['REQUEST_URI'];
 			switch($path){
 				case '/login.php':
 				include('login.php');
+				break;
+
+				case '/thread.php':
+				include('thread.php');
+				break;
+
+				case '/register.php':
+				include('register.php');
 				break;
 
 				default:
