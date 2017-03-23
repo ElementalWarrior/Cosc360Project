@@ -1,4 +1,4 @@
-<?php include('sidebar.php'); ?>
+<?php Html::render_view('sidebar'); ?>
 <section id="thread">
 	<section class="thread-content">
 		<h3>

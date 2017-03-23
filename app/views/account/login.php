@@ -1,6 +1,8 @@
-
+<?php
+global $view_data; ?>
+<?php echo array_key_exists('is_post', $view_data) && $view_data['is_post'] ? 'true' : 'false'; ?>
 <section id="login" class="single-centered">
-	<form class="" action="/auth/login.php" method="post">
+	<form class="" action="/account/login" method="post">
 		<h3>Login:</h3>
 		<div class="">
 			<input type="text" name="username" value="" placeholder="Username" required>

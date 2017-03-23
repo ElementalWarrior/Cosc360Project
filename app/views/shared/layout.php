@@ -1,14 +1,13 @@
-<?php app_include_once("/html_helper.php"); ?>
 
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
-		<link rel="stylesheet" href="/content/styles/styles.css">
+		<link rel="stylesheet" href="/content_static/styles/styles.css">
 		<title>Index</title>
 	</head>
 	<body>
-		<?php Html::RenderView("header") ?>
+		<?php Html::render_view("header") ?>
 		<main>
 			<!-- <div id="breadcrumbs">
 				<ul>
@@ -18,9 +17,10 @@
 				</ul>
 			</div> -->
 			<?php
-		  Html::RenderView($view, $controller);
+
+		  		render_body();
 			?>
 		</main>
-		<?php Html::RenderView("footer") ?>
+		<?php Html::render_view("footer") ?>
 	</body>
 </html>

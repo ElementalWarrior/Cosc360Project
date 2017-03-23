@@ -1,5 +1,5 @@
 
-<?php include("sidebar.php") ?>
+<?php Html::render_view("sidebar") ?>
 <section id="posts">
 <!-- <div id="post-header" class="clearfix">
 	<div class="post-right">

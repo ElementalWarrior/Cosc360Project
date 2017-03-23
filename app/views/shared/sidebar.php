@@ -1,4 +1,3 @@
-
 	<section id="sidebar">
 		<article>
 			<h2>Some very import stuff!</h2>

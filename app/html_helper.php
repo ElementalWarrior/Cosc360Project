@@ -1,17 +1,17 @@
 <?php
 class Html {
-	public static function RenderView($action, $controller = null) {
+	public static function render_view($view, $controller = null) {
 		if(strlen($controller) == 0) {
 			$path = '/views/shared/';
 		} else {
 			$path = "/views/$controller/";
 		}
 
-		// echo "<br/><br/>" . "$path" . "$action.php". '<br/>';
-		if(!app_file_exists("$path" . "$action.php")) {
-			echo ("Could not find view");
+		$full_path = "$path" . "$view.php";
+		if(!app_file_exists($full_path)) {
+			echo ("Could not find view '$view' on '$controller' controller");
 		} else {
-			app_include("$path" . "$action.php");
+			app_include($full_path);
 		}
 	}
 }
