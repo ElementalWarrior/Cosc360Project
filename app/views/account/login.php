@@ -1,6 +1,6 @@
 
 <section id="login" class="single-centered">
-	<form class="" action="index.html" method="post">
+	<form class="" action="/auth/login.php" method="post">
 		<h3>Login:</h3>
 		<div class="">
 			<input type="text" name="username" value="" placeholder="Username" required>
