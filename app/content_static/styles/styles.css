@@ -217,6 +217,16 @@ main > * {
 .response-by {
 	font-size: 0.8rem;
 }
+.post {
+	position: relative;
+}
+.post .date-posted {
+	color: #aaa;
+	font-size: 0.8rem;
+	position: absolute;
+	right: 0.5rem;
+	bottom: 0.5rem;
+}
 .post p {
 	margin-top: 20px;
 }

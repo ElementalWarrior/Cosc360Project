@@ -1,6 +1,6 @@
 <?php
-global $view_data; ?>
-<?php echo array_key_exists('is_post', $view_data) && $view_data['is_post'] ? 'true' : 'false'; ?>
+global $view_data;
+ ?>
 <section id="login" class="single-centered">
 	<form class="" action="/account/login" method="post">
 		<h3>Login:</h3>

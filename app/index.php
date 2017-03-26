@@ -1,28 +1,16 @@
 <?php
+session_start();
+
 require_once('helper.php');
 require_once('html_helper.php');
+require_once('config.php');
 app_include('routing.php');
 
 $path = $_SERVER['REQUEST_URI'];
-// switch($path){
-// 	case '/login.php':
-// 	include('login.php');
-// 	break;
-//
-// 	case '/thread.php':
-// 	include('thread.php');
-// 	break;
-//
-// 	case '/register.php':
-// 	include('register.php');
-// 	break;
-//
-// 	default:
-// 	include('home.php');
-// 	break;
-// }
-$action = 'login';
-$controller = 'account';
+
+$action = 'index';
+$controller = 'content';
+$params = array();
 
 $routing_info = check_route($_SERVER['REQUEST_URI']);
 switch($routing_info['code']) {
@@ -37,6 +25,7 @@ switch($routing_info['code']) {
 	case 1:
 	$action = $routing_info['action'];
 	$controller = $routing_info['controller'];
+	$params = $routing_info['params'];
 	break;
 
 	//file found
@@ -48,7 +37,13 @@ switch($routing_info['code']) {
 	readfile($path);
 	break;
 }
-
+$user = null;
+if(!empty($_SESSION['account_id'])) {
+	$user = array(
+		'account_id' => $_SESSION['account_id'],
+		'username' => $_SESSION['username']
+	);
+}
 $page_body = '';
 function render_body(){
 	global $page_body;
@@ -58,7 +53,7 @@ if($routing_info['code'] != 2) {
 	app_include_once("/controllers/$controller" . '_controller.php');
 	$class = $controller . "_controller";
 	$controller_object = new $class();
-	$action_result = $controller_object->$action();
+	$action_result = call_user_func_array(array($controller_object, $action), $params);
 	ob_start();
 		if(is_array($action_result)) {
 			$view_data = $action_result['view_data'];

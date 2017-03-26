@@ -23,7 +23,12 @@ function check_route($request_uri) {
 			if(sizeof($methods) > 0) {
 				foreach($methods as $key => $var) {
 					if($var == $arr[1]){
-						return array('code' => 1, 'controller' => $arr[0], 'action' => $arr[1]);
+						//clone and remove first 2, then reindex
+						$params = array_values($arr);
+						unset($params[0]);
+						unset($params[1]);
+						$params = array_values($params);
+						return array('code' => 1, 'controller' => $arr[0], 'action' => $arr[1], 'params' => $params);
 					}
 				}
 			}

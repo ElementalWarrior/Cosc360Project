@@ -14,4 +14,7 @@ class Html {
 			app_include($full_path);
 		}
 	}
+	public static function special_chars($str) {
+		return htmlspecialchars($str, ENT_XHTML, 'UTF-8');
+	}
 }
