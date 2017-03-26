@@ -17,4 +17,7 @@
 		<span class="author"><?php echo $row['username']; ?></author>
 	</article>
 <?php } ?>
+	<div class="text-right">
+		<a href="/content/new_thread/" class="btn">New Thread</a>
+	</div>
 </section>
