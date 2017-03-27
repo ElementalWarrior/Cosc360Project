@@ -6,6 +6,7 @@
 <?php Html::render_view('sidebar'); ?>
 <section id="thread">
 	<section class="thread-content">
+		<img src="data:image/<?php echo $thread['content_type'] . ';base64,' . base64_encode($thread['image']);?>" alt="">
 		<h3>
 			<?php echo Html::special_chars($thread['thread_name']); ?>
 			<div class="author"><?php echo Html::special_chars($thread['username']); ?></div>
@@ -15,6 +16,7 @@
 	<section id="posts">
 		<?php foreach($posts as $post) { ?>
 		<div class="post">
+			<img src="data:image/<?php echo $post['content_type'] . ';base64,' . base64_encode($post['image']);?>" alt="">
 			<div class="response-by">Response By:</div>
 			<div class="author"><?php echo $post['username']; ?></div>
 			<p><?php echo Html::special_chars($post['post_body']); ?></p>

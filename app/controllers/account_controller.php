@@ -49,7 +49,7 @@ class account_controller extends controller {
 		|| $password !== $password_check
 		|| empty($_FILES['image'])
 		|| getimagesize($_FILES["image"]["tmp_name"]) === false) {
-			return;
+			return $this->render_action('register', 'account', array('error' => 'All fields must be filled out, passwords must match, and there must be an image uploaded.'));
 		}
 
 		$target_file = $_FILES['image']['tmp_name'];

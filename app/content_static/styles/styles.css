@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Lato');
 
 /************************ Styles shared on every page *************************/
-a {
+a,
+.btn {
 	color: #ee0000;
 	text-decoration: none;
 }
@@ -29,6 +30,7 @@ p {
 	text-align: right;
 }
 .btn {
+	background: #fff;
 	border: 3px solid #ee0000;
 	border-width: 3px 0;
 	box-shadow: 0 0 2px 0 rgba(0,0,0,0.2);
@@ -48,6 +50,9 @@ textarea {
 	border: 1px solid #ddd;
 	box-shadow: inset 0 2px 2px -1px rgba(0,0,0,0.1);
 	padding: 0.25rem;
+}
+textarea {
+	resize: none;
 }
 header {
 	border-bottom: 4px solid #ee0000;
@@ -115,6 +120,9 @@ main {
 	display: flex;
 	flex-wrap: wrap;
 	padding-bottom: 30px;
+}
+main > * {
+	margin-bottom: 20px;
 }
 body {
 	margin: 0;
@@ -224,11 +232,24 @@ main > * {
     margin: 0;
     padding: 20px;
 }
+.thread-content img {
+	height: 40px;
+	float: right;
+	margin-top: 10px;
+	margin-right: 0.5rem;
+	margin-left: 0.5rem;
+	width: 40px;
+}
 .response-by {
 	font-size: 0.8rem;
 }
 .post {
 	position: relative;
+}
+.post img {
+	float: right;
+	height: 40px;
+	width: 40px;
 }
 .post .date-posted {
 	color: #aaa;
@@ -250,4 +271,34 @@ main > * {
 	box-sizing: border-box;
 	resize: none;
 	width: 100%;
+}
+#new_thread {
+	flex: 1;
+	align-self: flex-start;
+	margin-top: 35px;
+}
+#new_thread .entry {
+	background: #fff;
+	border-top: 4px solid #FFA552;
+	box-shadow: 0 6px 6px -4px rgba(0,0,0,0.1);
+	padding: 0.5rem;
+}
+#new_thread input,
+#new_thread textarea {
+	margin-bottom: 0.5rem;
+	max-width: 400px;
+	width: 100%;
+}
+#new_thread textarea {
+	height: 100px;
+}
+#btnSubmitThread {
+	margin-top: 20px;
+}
+#missing {
+	padding: 2rem;
+	text-align: center;
+}
+#missing img {
+	width: 300px;
 }
