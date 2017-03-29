@@ -14,7 +14,7 @@ global $view_data;
 			</div>
 		</div>
 		<div class="text-center">
-			<input type="submit" name="submit" value="Login!">
+			<input type="submit" name="submit" class="btn" value="Login!">
 		</div>
 	</form>
 </section>
