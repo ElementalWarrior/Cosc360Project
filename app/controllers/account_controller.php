@@ -80,18 +80,22 @@ class account_controller extends controller {
 
 	}
 
-	public function profile() {
+	public function profile($account_id) {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
-			return $this->post_profile();
+			return $this->post_profile($account_id);
 		}
 
 		global $user;
-		if(!is_array($user)) {
-			header('Location: /');
+		if(empty($account_id)){
+			$account_id = $user['account_id'];
+			if(!is_array($user)) {
+				header('Location: /');
+				return "";
+			}
 		}
 		$dbh = $this->create_db_connection();
 		$stmt = $dbh->prepare('SELECT image, username, email, content_type from accounts where account_id = :account_id');
-		$stmt->execute(array(':account_id' => $user['account_id']));
+		$stmt->execute(array(':account_id' => $account_id));
 		$results = $stmt->fetch();
 
 		$view_data = array(
@@ -102,9 +106,11 @@ class account_controller extends controller {
 		);
 		return $this->render_action('profile', 'account', $view_data);
 	}
-	private function post_profile() {
+	private function post_profile($account_id) {
 		global $user;
-
+		if($account_id != $user['account_id']) {
+			return "";
+		}
 		$email = $_POST['email'];
 		$view_data = array(
 			'username' => $user['username'],

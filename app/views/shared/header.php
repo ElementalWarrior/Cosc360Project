@@ -6,7 +6,7 @@ global $user;
 		<nav>
 			<ul>
 				<li><a href="/">Home</a></li>
-				<li><a href="/search.php">Search</a></li>
+				<li><a href="/content/search">Search</a></li>
 				<?php if(!isset($user)) { ?>
 					<li><a href="/account/login">Login</a></li>
 					<li><a href="/account/register">Register</a></li>

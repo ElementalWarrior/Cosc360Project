@@ -316,9 +316,70 @@ main > * {
 	height: auto;
 	width: 80px;
 }
+#profile h2 {
+	background: #fff7e4;
+  border: 4px solid #FFA552;
+  border-width: 4px 0;
+  margin: 0 0 20px 0;
+  padding: 0.5rem;
+	text-align: center;
+}
 #profile form {
-	min-width: 320px;
+	padding: 0 1rem;
+	width: 100%;
+}
+#profile table {
+	margin: 0 auto;
 }
 #profile table td {
 	padding: 10px;
+}
+#search {
+	align-self: flex-start;
+	flex: 1;
+}
+#search > div {
+
+	background-color: #fffcf4;
+	border: 1px solid #fff2e7;
+	margin-top: 35px;
+	padding-bottom: 20px;
+	text-align: center;
+}
+#search h2 {
+	background: #fff7e4;
+  border: 4px solid #FFA552;
+  border-width: 4px 0;
+  margin: 0 0 20px 0;
+  padding: 0.5rem;
+}
+#search [type=text] {
+	min-width: 300px;
+}
+#btnSearch {
+	margin-top: 20px;
+}
+#results {
+	margin-top: 2rem;
+}
+#results ul {
+	list-style: none inside;
+	padding: 0;
+	text-align: left;
+}
+#results li {
+	display: block;
+	clear: both;
+	margin-bottom: 20px;
+	padding: 0.5rem;
+}
+#results li:nth-child(2n+1) {
+	background: rgba(0,0,0,0.05);
+}
+#results img {
+	float: left;
+	height: auto;
+	margin-right: 0.5rem;
+	margin-bottom: 0.5rem;
+	width: 50px;
 }

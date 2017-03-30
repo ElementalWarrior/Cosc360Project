@@ -81,4 +81,72 @@ class content_controller extends controller{
 		$id = $stmt->fetch()['id'];
 		header("Location: /content/thread/$id");
 	}
+	public function search() {
+		if($_SERVER['REQUEST_METHOD'] === 'POST') {
+			return $this->post_search();
+		}
+		return $this->render_action('search', 'content');
+	}
+	private function post_search() {
+		$dbh = $this->create_db_connection();
+
+		$username = ($_POST['username']);
+		$email = ($_POST['email']);
+		$post = ($_POST['posts']);
+
+		$results = array();
+		$view_data = array();
+		$search_username = '';
+		$search_email = '';
+		$search_post = '';
+		$view_data['username'] = '';
+		$view_data['email'] = '';
+		$view_data['posts'] = '';
+		if(!empty($username)) {
+			$view_data['username'] = $username;
+			$search_username = $this->strip_sql_specials($username);
+
+			$stmt = $dbh->prepare('SELECT account_id, username, email, image, content_type from accounts where username like :username');
+			$stmt->execute(array(':username' => '%' . $search_username . '%'));
+			$view_data['user_results'] = $stmt->fetchAll();
+
+		} else if (!empty($email)) {
+			$view_data['email'] = $email;
+			$search_email = $this->strip_sql_specials($email);
+
+			$stmt = $dbh->prepare('SELECT account_id, username, email, image, content_type from accounts where email like :email');
+			$stmt->execute(array(':email' => '%' . $search_email . '%'));
+			$view_data['user_results'] = $stmt->fetchAll();
+
+		} else if(!empty($post)) {
+			$view_data['posts'] = $post;
+			$search_post = $this->strip_sql_specials($post);
+			$stmt = $dbh->prepare(
+				'SELECT
+					a1.account_id as thread_account_id, a1.username as thread_username, a1.email as thread_email, a1.image as thread_image, a1.content_type as thread_content_type,
+					a2.account_id as thread_account_id, a2.username as thread_username, a2.email as thread_email, a2.image as thread_image, a2.content_type as thread_content_type,
+					t.thread_id, thread_name, thread_body, p.post_id, post_body
+				from threads t
+				left join posts p on t.thread_id = p.thread_id and p.post_body like :post
+				join accounts a1 on t.account_id = a1.account_id
+				left join accounts a2 on p.account_id = a2.account_id
+				where thread_name like :post
+				or thread_body like :post
+				or post_body like :post');
+			$stmt->execute(array(':post' => '%' . $search_post . '%'));
+			$view_data['content_results'] = $stmt->fetchAll();
+		}
+		return $this->render_action('search', 'content', $view_data);
+	}
+	public static function strip_sql_specials($string) {
+		return str_replace(
+			array(
+				'%',
+				'_'
+			),
+			array(
+				'\%',
+				'\_'
+			), $string);
+	}
 }
