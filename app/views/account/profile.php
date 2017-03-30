@@ -1,7 +1,7 @@
 <?php
 global $view_data;
 global $user;
-$allow_submit = is_array($user);
+$allow_submit = is_array($user) && $user['account_id'] == $view_data['account_id'];
  ?>
 <section id="profile" class="single-centered">
    <form class="" id="frm-profile" action="/account/profile" method="post" enctype="multipart/form-data">
@@ -16,14 +16,14 @@ $allow_submit = is_array($user);
 		</tr>
 		<tr>
 			<td><strong>Email: </strong></td>
-			<?php if(is_array($allow_submit)){ ?>
+			<?php if($allow_submit){ ?>
 				<td><input type="email" name="email" value="<?php echo $view_data['email']; ?>" placeholder="Email" required></td>
 			<?php } else { ?>
 				<td><?php echo $view_data['email']; ?></td>
 				<?php } ?>
 		</tr>
 		<tr>
-			<td><strong>Profile Picture</strong></td>
+			<td><strong>Profile Picture:</strong></td>
 			<td>
 				<div class="">
 					<img id="profile-image" src="data:image/<?php echo $view_data['content_type'] . ';base64,' . base64_encode($view_data['image']); ?>" alt="">
@@ -34,11 +34,11 @@ $allow_submit = is_array($user);
 		 		   </div>
 		 		   <input type="file" name="image" id="image" required>
 		 	   </div>
-				 <?php if(is_array($allow_submit)){ ?>
+				 <?php if($allow_submit){ ?>
 				<button type="button" name="button" class="btn-alt" id="changeImage">Change Image</button></td>
 				<?php } ?>
 		</tr>
-		<?php if(is_array($allow_submit)){ ?>
+		<?php if($allow_submit){ ?>
 		<tr>
 			<td colspan="2">
 		 	   <div class="text-center">
@@ -79,4 +79,18 @@ $allow_submit = is_array($user);
 			}
 		})
 	})
+</script>
+
+<script type="text/javascript">
+	var crumbs = [
+		{
+			href: "/",
+			text: "Home"
+		},
+		{
+			href: "/account/profile/<?php echo $view_data['account_id']; ?>",
+			text: "Profile"
+		}
+	]
+	$(document).ready(Breadcrumbs(crumbs))
 </script>

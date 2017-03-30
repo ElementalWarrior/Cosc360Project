@@ -30,6 +30,9 @@ p {
 .text-right {
 	text-align: right;
 }
+.underline {
+	text-decoration: underline;
+}
 .btn {
 	background: #fff;
 	border: 3px solid #ee0000;
@@ -82,12 +85,24 @@ footer {
 }
 #breadcrumbs {
 	margin-top: 0.5rem;
+	margin-bottom: 0;
 	width: 100%;
 }
 #breadcrumbs ul {
 	list-style: none inside;
 	margin: 0;
 	padding: 0;
+}
+#breadcrumbs li {
+	display: inline-block;
+}
+#breadcrumbs li::after {
+	content: '>';
+	font-size: 0.8rem;
+	margin: 0 .5rem;
+}
+#breadcrumbs li:last-child::after {
+	content:'';
 }
 nav {
 	text-align: right;
@@ -359,27 +374,55 @@ main > * {
 #btnSearch {
 	margin-top: 20px;
 }
-#results {
+.results {
 	margin-top: 2rem;
 }
-#results ul {
+.results ul {
 	list-style: none inside;
 	padding: 0;
 	text-align: left;
 }
-#results li {
+.results li {
 	display: block;
 	clear: both;
 	margin-bottom: 20px;
+}
+#user_results li {
 	padding: 0.5rem;
 }
-#results li:nth-child(2n+1) {
+.results ul.striped > li:nth-child(2n+1) {
 	background: rgba(0,0,0,0.05);
 }
-#results img {
+.results img {
 	float: left;
 	height: auto;
-	margin-right: 0.5rem;
-	margin-bottom: 0.5rem;
+	margin: 0 0.5rem 0.5rem 0;
 	width: 50px;
+}
+#content_results img {
+	float: right;
+	margin: 0 0 0.5rem 0.5rem;
+}
+#content_results .user {
+	float: right;
+}
+.post_header {
+	border-bottom: 1px solid #ffb6b6;
+	padding: 0.5rem;
+}
+#content_results ul ul {
+	padding: 0.5rem;
+}
+#content_results > ul > li {
+	border: 1px solid #ffb6b6;
+}
+#content_results .search-username,
+#content_results .search-email {
+	margin-right: 60px;
+}
+.ui-posts .search-username {
+	margin-right: 0!important;
+}
+#content_results > ul > li {
+	margin-bottom: 40px;
 }

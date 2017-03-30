@@ -18,3 +18,17 @@ global $view_data;
 		</div>
 	</form>
 </section>
+
+<script type="text/javascript">
+	var crumbs = [
+		{
+			href: "/",
+			text: "Home"
+		},
+		{
+			href: "/account/login",
+			text: "Login"
+		}
+	]
+	$(document).ready(Breadcrumbs(crumbs))
+</script>

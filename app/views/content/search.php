@@ -8,7 +8,7 @@ Html::render_view('sidebar');
 
 		<form class="" action="/content/search" method="post">
 
-			<h2>Search <?php echo count($view_data['content_results']); ?></h2>
+			<h2>Search</h2>
 			<p>Search by either Username, Email, or post content</p>
 			<div>
 				<input type="text" name="username" value="<?php echo $view_data['username']; ?>" placeholder="Username" />
@@ -29,16 +29,23 @@ Html::render_view('sidebar');
 		</form>
 	</div>
 	<?php
-	function render_user($user) {
-			echo '<img id="profile-image" class="search-image" src="data:image/' . $user['content_type'] . ';base64,' . base64_encode($user['image']) . '" alt="">';
-			echo '<div class="search-username"><a href="/account/profile/' . $user['account_id'] . '">' . $user['username'] . '</a></div>';
-			echo '<div class="search-email">' . $user['email'] . '</div>';
+	function render_user($user, $hide_email = false, $hide_image = false, $include_by = false) {
+		global $view_data;
+		echo '<div class="user">';
+		if(!$hide_image) {
+			echo '<img id="search-image" class="search-image" src="data:image/' . $user['content_type'] . ';base64,' . base64_encode($user['image']) . '" alt="">';
+		}
+		echo '<div class="search-username">' . ($include_by ? 'by ' : '') . '<a href="/account/profile/' . $user['account_id'] . '">' . str_replace($view_data['username'], '<span class="underline">' . $view_data['username'] . '</span>', $user['username']) . '</a></div>';
+		if(!$hide_email) {
+			echo '<div class="search-email">' . str_replace($view_data['email'], '<span class="underline">' . $view_data['email'] . '</span>', $user['email']) . '</div>';
+		}
+		echo '</div>';
 	}
 	 ?>
 	<?php if(!empty($view_data['user_results'])) { ?>
-	<div id="results">
+	<div id="user_results" class="results">
 		<h2>Results:</h2>
-		<ul>
+		<ul class="striped">
 
 			<?php foreach($view_data['user_results'] as $user) {
 					echo '<li>';
@@ -49,7 +56,7 @@ Html::render_view('sidebar');
 		</ul>
 	</div>
 	<?php } else if(!empty($view_data['content_results'])) { ?>
-	<div id="results">
+	<div id="content_results" class="results">
 		<h2>Results:</h2>
 		<ul id="ul-threads">
 
@@ -57,7 +64,7 @@ Html::render_view('sidebar');
 			$last_thread_id = null;
 			foreach($view_data['content_results'] as $search) {
 				$render_thread = false;
-				if($last_thread_id != null && $last_thread_id != $search) {
+				if($last_thread_id != null && $last_thread_id != $search['thread_id']) {
 					echo '</ul></li>';
 					$render_thread = true;
 				} else if($last_thread_id == null) {
@@ -65,9 +72,6 @@ Html::render_view('sidebar');
 				}
 				if($render_thread) {
 					$last_thread_id = $search['thread_id'];
-					echo '<li>';
-					echo '<h4>' . $search['thread_name'] . '</h4>';
-					echo '<p>' . $search['thread_body'] . '</p>';
 					$user = array(
 						'account_id' => $search['thread_account_id'],
 						'username' => $search['thread_username'],
@@ -75,15 +79,42 @@ Html::render_view('sidebar');
 						'image' => $search['thread_image'],
 						'content_type' => $search['thread_content_type']
 					);
-					render_user($user);
-					echo '<ul class="ui-posts">';
+					echo '<li><div class="post_header">';
+					render_user($user, true);
+					echo '<h4><a href="/content/thread/' . $search['thread_id'] . '">' . str_replace($view_data['posts'], '<span class="underline">' . $view_data['posts'] . '</span>', Html::special_chars($search['thread_name'])) . '</a></h4>';
+					echo '<p>' . str_replace($view_data['posts'], '<span class="underline">' . $view_data['posts'] . '</span>', Html::special_chars($search['thread_body'])) . '</p></div>';
+					echo '<ul class="ui-posts striped">';
 				}
-				if(!empty($search['post_id']))
+				if(!empty($search['post_id'])) {
 					echo '<li>';
-					echo '<p>' . $search['post_body'] . '</p>';
+					$user = array(
+						'account_id' => $search['post_account_id'],
+						'username' => $search['post_username'],
+						'email' => $search['post_email'],
+						'image' => $search['post_image'],
+						'content_type' => $search['post_content_type']
+					);
+
+					render_user($user, true, true, true);
+					echo '<p>' . str_replace($view_data['posts'], '<span class="underline">' . $view_data['posts'] . '</span>', Html::special_chars($search['post_body'])) . '</p>';
 					echo '</li>';
+				}
 			} ?>
 		</ul>
 	</div>
 	<?php } ?>
 </section>
+
+<script type="text/javascript">
+	var crumbs = [
+		{
+			href: "/",
+			text: "Home"
+		},
+		{
+			href: "/content/search",
+			text: "Search"
+		}
+	]
+	$(document).ready(Breadcrumbs(crumbs))
+</script>

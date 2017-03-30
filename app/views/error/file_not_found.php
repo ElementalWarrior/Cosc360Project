@@ -7,3 +7,17 @@
 		Click <a href="/">here</a> to go to the home page!
 	</p>
 </section>
+
+<script type="text/javascript">
+	var crumbs = [
+		{
+			href: "/",
+			text: "Home"
+		},
+		{
+			href: "/error/file_not_found",
+			text: "File Not Found"
+		}
+	]
+	$(document).ready(Breadcrumbs(crumbs))
+</script>

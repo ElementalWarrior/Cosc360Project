@@ -80,7 +80,7 @@ class account_controller extends controller {
 
 	}
 
-	public function profile($account_id) {
+	public function profile($account_id = null) {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
 			return $this->post_profile($account_id);
 		}
@@ -99,6 +99,7 @@ class account_controller extends controller {
 		$results = $stmt->fetch();
 
 		$view_data = array(
+			'account_id' => $account_id,
 			'username' => $results['username'],
 			'email' => $results['email'],
 			'image' => $results['image'],
@@ -113,6 +114,7 @@ class account_controller extends controller {
 		}
 		$email = $_POST['email'];
 		$view_data = array(
+			'account_id' => $account_id,
 			'username' => $user['username'],
 			'email' => $email,
 			'image' => file_get_contents($_FILES['image']['tmp_name']),

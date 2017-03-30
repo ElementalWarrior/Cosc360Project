@@ -54,3 +54,17 @@
 		})
 	})
 </script>
+
+<script type="text/javascript">
+	var crumbs = [
+		{
+			href: "/",
+			text: "Home"
+		},
+		{
+			href: "/content/new_thread",
+			text: "New Thread"
+		}
+	]
+	$(document).ready(Breadcrumbs(crumbs))
+</script>

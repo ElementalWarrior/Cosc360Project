@@ -124,7 +124,7 @@ class content_controller extends controller{
 			$stmt = $dbh->prepare(
 				'SELECT
 					a1.account_id as thread_account_id, a1.username as thread_username, a1.email as thread_email, a1.image as thread_image, a1.content_type as thread_content_type,
-					a2.account_id as thread_account_id, a2.username as thread_username, a2.email as thread_email, a2.image as thread_image, a2.content_type as thread_content_type,
+					a2.account_id as post_account_id, a2.username as post_username, a2.email as post_email, a2.image as post_image, a2.content_type as post_content_type,
 					t.thread_id, thread_name, thread_body, p.post_id, post_body
 				from threads t
 				left join posts p on t.thread_id = p.thread_id and p.post_body like :post

@@ -1,4 +1,5 @@
 <?php
+	global $user;
 	global $view_data;
 	$thread = $view_data['thread'];
 	$posts = $view_data['posts'];
@@ -24,6 +25,7 @@
 		</div>
 		<?php } ?>
 	</section>
+	<?php if(is_array($user)) { ?>
 	<section id="respond">
 		<h3>Post a response:</h3>
 		<form class="" action="/content/reply/<?php echo Html::special_chars($thread['thread_id']); ?>" method="post">
@@ -31,4 +33,19 @@
 			<input type="submit" name="submit" value="Submit your response!">
 		</form>
 	</section>
+	<?php } ?>
 </section>
+
+<script type="text/javascript">
+	var crumbs = [
+		{
+			href: "/",
+			text: "Home"
+		},
+		{
+			href: "/content/thread/<?php echo $thread['thread_id']; ?>",
+			text: "<?php echo Html::special_chars($thread['thread_name']); ?>"
+		}
+	]
+	$(document).ready(Breadcrumbs(crumbs))
+</script>
