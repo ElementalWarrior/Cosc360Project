@@ -6,7 +6,10 @@ function check_route($request_uri) {
 	$question_pos = strpos($request_uri, '?');
 	$query_string = substr($request_uri, $question_pos);
 	$request_uri = $question_pos == false ? $request_uri : substr($request_uri, 0, $question_pos);
-	$arr = array_values(array_filter(explode('/', $request_uri)));
+	function filter($ele) {
+		return strlen($ele) > 0;
+	}
+	$arr = array_values(array_filter(explode('/', $request_uri), 'filter'));
 
 	if(sizeof($arr) == 0 || sizeof($arr) > 0) {
 

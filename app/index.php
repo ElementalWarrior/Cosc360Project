@@ -3,6 +3,7 @@ session_start();
 require_once('helper.php');
 require_once('html_helper.php');
 require_once('config.php');
+require_once('controllers/controller.php');
 app_include('routing.php');
 
 $path = $_SERVER['REQUEST_URI'];
@@ -16,24 +17,24 @@ function handle_error($errno, $errstr, $errfile, $errline) {
 	switch ($errno) {
 	    case E_USER_ERROR:
 	        $msg .= "<b>My ERROR</b> [$errno] $errstr<br />\n";
-	        $msg .= "  Fatal error on line $errline in file $errfile";
-	        $msg .= ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
+	        $msg .= "  Fatal error on line $errline in file $errfile<br />\n";
+	        $msg .= " PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
 	        exit(1);
 	        break;
 
 	    case E_USER_WARNING:
 	        $msg .=  "<b>My WARNING</b> [$errno] $errstr<br />\n";
-	        $msg .= "  on line $errline in file $errfile";
+	        $msg .= "  on line $errline in file $errfile<br />\n";
 	        break;
 
 	    case E_USER_NOTICE:
 	        $msg .=  "<b>My NOTICE</b> [$errno] $errstr<br />\n";
-	        $msg .= " on line $errline in file $errfile";
+	        $msg .= " on line $errline in file $errfile<br />\n";
 	        break;
 
 	    default:
 	        $msg .=  "Unknown error type: [$errno] $errstr<br />\n";
-	        $msg .= "  on line $errline in file $errfile";
+	        $msg .= "  on line $errline in file $errfile<br />\n";
 	        break;
     }
 	$e = new Exception($msg);
@@ -99,8 +100,20 @@ function render_body(){
 if($routing_info['code'] != 2) {
 	app_include_once("/controllers/$controller" . '_controller.php');
 	$class = $controller . "_controller";
-	$controller_object = new $class();
-	$action_result = call_user_func_array(array($controller_object, $action), $params);
+	try {
+		$controller_object = new $class();
+		$action_result = call_user_func_array(array($controller_object, $action), $params);
+	} catch (Exception $e) {
+		$dbh = controller::create_db_connection();
+		$stmt = $dbh->prepare('INSERT into error_log(message, stack_trace) select :msg, :trace');
+		$stmt->execute(array(
+			':msg' => $e->getMessage(),
+			':trace' => $e->getTraceAsString()
+		));
+		if(stripos($_SERVER['SERVER_NAME'],'localhost') !== false) {
+			throw $e;
+		}
+	}
 	ob_start();
 		if(is_array($action_result)) {
 			$view_data = $action_result['view_data'];

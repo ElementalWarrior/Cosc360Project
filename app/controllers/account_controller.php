@@ -14,7 +14,7 @@ class account_controller extends controller {
 		// $username = $dbh->quote($_POST['username']);
 		$view_data = array();
 
-		$stmt = $dbh->prepare('SELECT * from accounts where username = :username and password = :password');
+		$stmt = $dbh->prepare('SELECT * from accounts where username = :username and password = :password and date_disabled is null');
 		$stmt->execute(array(':username' => $username, ':password' => $password));
 		$results = $stmt->fetch();
 		if($results !== false) {
@@ -98,7 +98,7 @@ class account_controller extends controller {
 			return $this->post_profile($account_id);
 		}
 		$dbh = $this->create_db_connection();
-		$stmt = $dbh->prepare('SELECT image, username, email, content_type from accounts where account_id = :account_id');
+		$stmt = $dbh->prepare('SELECT image, username, email, content_type, date_disabled from accounts where account_id = :account_id');
 		$stmt->execute(array(':account_id' => $account_id));
 		$results = $stmt->fetch();
 
@@ -107,32 +107,45 @@ class account_controller extends controller {
 			'username' => $results['username'],
 			'email' => $results['email'],
 			'image' => $results['image'],
-			'content_type' => $results['content_type']
+			'content_type' => $results['content_type'],
+			'active' => $results['date_disabled'] == null
 		);
 		return $this->render_action('profile', 'account', $view_data);
 	}
 	private function post_profile($account_id) {
 		global $user;
-		if($account_id != $user['account_id'] || $user['admin']) {
+		if($account_id != $user['account_id'] && !$user['admin']) {
 			return "";
 		}
 		$email = $_POST['email'];
+
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare('SELECT image, username, email, content_type, date_disabled from accounts where account_id = :account_id');
+		$stmt->execute(array(':account_id' => $account_id));
+		$results = $stmt->fetch();
+
 		$view_data = array(
 			'account_id' => $account_id,
 			'username' => $user['username'],
 			'email' => $email,
-			'image' => file_get_contents($_FILES['image']['tmp_name']),
-			'content_type' => $_FILES['image']['type']
+			'image' => $results['image'],
+			'content_type' => $results['content_type'],
+			'active' => $results['date_disabled'] == null
 		);
+		if(!empty($_FILES) && !empty($_FILES['image']['tmp_name'])) {
+			$view_data['image'] = file_get_contents($_FILES['image']['tmp_name']);
+			$view_data['content_type'] = $_FILES['image']['type'];
+			$image_handle = fopen($_FILES['image']['tmp_name'], 'rb');
+		}
 
-		$dbh = $this->create_db_connection();
 		$stmt = $dbh->prepare('SELECT email from accounts where email = :email and account_id <> :account_id');
-		$stmt->execute(array(':email' => $_POST['email'], ':account_id' => $user['account_id']));
+		$stmt->execute(array(
+			':email' => $_POST['email'],
+			':account_id' => $account_id));
 		$results = $stmt->fetchAll();
 
 		$target_file = $_FILES['image']['tmp_name'];
 		$imageFileType = pathinfo($_FILES['image']['name'],PATHINFO_EXTENSION);
-		$image_handle = fopen($_FILES['image']['tmp_name'], 'rb');
 
 		$ok = true;
 		if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -144,11 +157,11 @@ class account_controller extends controller {
 			$view_data['error'] = 'This email is already in use.';
 			$ok = false;
 		}
-		else if(!empty($_FILES['image']) && $_FILES['image']['size'] > 200*1024) {
+		else if(!empty($_FILES['image']) && !empty($_FILES['image']['tmp_name']) && $_FILES['image']['size'] > 200*1024) {
 			$view_data['error'] = 'Image must be 200KB or smaller';
 			$ok = false;
 		}
-		else if(array_search($imageFileType, ['jpg', 'png', 'gif']) === false) {
+		else if(!empty($imageFileType) && array_search($imageFileType, ['jpg', 'png', 'gif']) === false) {
 			$view_data['error'] = 'Image must be of type jpg, png, or gif.';
 			$ok = false;
 		}
@@ -159,21 +172,22 @@ class account_controller extends controller {
 
 		$dbh->beginTransaction();
 
-		if(!empty($_FILES)) {
+		if(isset($image_handle)) {
 
 			$stmt = $dbh->prepare('UPDATE accounts set image = :image, content_type = :contenttype where account_id = :account_id');
-			$stmt->bindParam(':account_id', $user['account_id']);
+			$stmt->bindParam(':account_id', $account_id);
 			$stmt->bindParam(':contenttype', $imageFileType);
 			$stmt->bindParam(':image', $image_handle, PDO::PARAM_LOB);
 			$stmt->execute();
 		}
 
 		$stmt = $dbh->prepare('UPDATE accounts set email = :email where account_id = :account_id');
-		$stmt->bindParam(':account_id', $user['account_id']);
+		$stmt->bindParam(':account_id', $account_id);
 		$stmt->bindParam(':email', $email);
 		$stmt->execute();
 
 		$dbh->commit();
+		$view_data['error'] = 'Profile successfully updated.';
 
 
 		return $this->render_action('profile', 'account', $view_data);
@@ -300,5 +314,22 @@ class account_controller extends controller {
 		}
 
 		return $this->render_action('recover_password', 'account', $view_data);
+	}
+
+	public function set_status($account_id, $value) {
+		global $user;
+		if(!is_array($user) || !$user['admin'] || $user['account_id'] == $account_id) {
+			header('HTTP/1.0 403 Forbidden', true, 403);
+			return "";
+		}
+		$account_id = (int)$account_id;
+		$value = (bool)$value;
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare('UPDATE accounts set date_disabled = case when :status then null else now() end where account_id = :account_id');
+		$stmt->execute(array(
+			':account_id' => $account_id,
+			':status' => $value
+		));
+		return "True";
 	}
 }
