@@ -11,6 +11,44 @@ $action = 'index';
 $controller = 'content';
 $params = array();
 
+function handle_error($errno, $errstr, $errfile, $errline) {
+	$msg = "";
+	switch ($errno) {
+	    case E_USER_ERROR:
+	        $msg .= "<b>My ERROR</b> [$errno] $errstr<br />\n";
+	        $msg .= "  Fatal error on line $errline in file $errfile";
+	        $msg .= ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
+	        exit(1);
+	        break;
+
+	    case E_USER_WARNING:
+	        $msg .=  "<b>My WARNING</b> [$errno] $errstr<br />\n";
+	        $msg .= "  on line $errline in file $errfile";
+	        break;
+
+	    case E_USER_NOTICE:
+	        $msg .=  "<b>My NOTICE</b> [$errno] $errstr<br />\n";
+	        $msg .= " on line $errline in file $errfile";
+	        break;
+
+	    default:
+	        $msg .=  "Unknown error type: [$errno] $errstr<br />\n";
+	        $msg .= "  on line $errline in file $errfile";
+	        break;
+    }
+	$e = new Exception($msg);
+	$dbh = controller::create_db_connection();
+	$stmt = $dbh->prepare('INSERT into error_log(message, stack_trace) select :msg, :trace');
+	$stmt->execute(array(
+		':msg' => $msg,
+		':trace' => $e->getTraceAsString()
+	));
+	if(stripos($_SERVER['SERVER_NAME'],'localhost') !== false) {
+		echo $e->getMessage();
+	}
+}
+set_error_handler('handle_error');
+
 function error_page(&$action, &$controller) {
 	$action = 'file_not_found';
 	$controller = 'error';
@@ -49,7 +87,8 @@ $user = null;
 if(!empty($_SESSION['account_id'])) {
 	$user = array(
 		'account_id' => $_SESSION['account_id'],
-		'username' => $_SESSION['username']
+		'username' => $_SESSION['username'],
+		'admin' => $_SESSION['admin']
 	);
 }
 $page_body = '';

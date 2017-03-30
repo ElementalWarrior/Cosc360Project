@@ -1,7 +1,7 @@
 <?php
 global $view_data;
 global $user;
-$allow_submit = is_array($user) && $user['account_id'] == $view_data['account_id'];
+$allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_id'] || $user['admin']);
  ?>
 <section id="profile" class="single-centered">
    <form class="" id="frm-profile" action="/account/profile" method="post" enctype="multipart/form-data">

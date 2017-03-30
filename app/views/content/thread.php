@@ -10,7 +10,7 @@
 		<img src="data:image/<?php echo $thread['content_type'] . ';base64,' . base64_encode($thread['image']);?>" alt="">
 		<h3>
 			<?php echo Html::special_chars($thread['thread_name']); ?>
-			<div class="author"><?php echo Html::special_chars($thread['username']); ?></div>
+			<a href="/account/profile/<?php echo $thread['account_id']; ?>" class="author"><?php echo Html::special_chars($thread['username']); ?></a>
 		</h3>
 		<p><?php echo Html::special_chars($thread['thread_body']); ?></p>
 	</section>
@@ -19,7 +19,7 @@
 		<div class="post">
 			<img src="data:image/<?php echo $post['content_type'] . ';base64,' . base64_encode($post['image']);?>" alt="">
 			<div class="response-by">Response By:</div>
-			<div class="author"><?php echo $post['username']; ?></div>
+			<a href="/account/profile/<?php echo $post['account_id']; ?>" class="author"><?php echo $post['username']; ?></a>
 			<p><?php echo Html::special_chars($post['post_body']); ?></p>
 			<div class="date-posted"><?php echo $post['date_created']; ?></div>
 		</div>

@@ -4,7 +4,7 @@ class content_controller extends controller{
 	public function index() {
 		$dbh = $this->create_db_connection();
 		$threads = array();
-		foreach($dbh->query('SELECT thread_id, thread_name, username, num_posts from threads t join accounts a on a.account_id = t.account_id order by date_updated desc') as $row) {
+		foreach($dbh->query('SELECT thread_id, thread_name, username, num_posts, a.account_id from threads t join accounts a on a.account_id = t.account_id order by date_updated desc') as $row) {
 			$threads[] = $row;
 		}
 		return $this->render_action('index', 'content', $threads);
@@ -14,12 +14,12 @@ class content_controller extends controller{
 		$dbh = $this->create_db_connection();
 
 		//get thread info
-		$stmt = $dbh->prepare('SELECT thread_id, thread_name, thread_body, username, image, content_type, num_posts from threads t join accounts a on a.account_id = t.account_id where thread_id = :thread_id');
+		$stmt = $dbh->prepare('SELECT thread_id, thread_name, thread_body, username, image, content_type, num_posts, a.account_id from threads t join accounts a on a.account_id = t.account_id where thread_id = :thread_id');
 		$stmt->execute(array(':thread_id' => $thread_id));
 		$thread = $stmt->fetch();
 
 		//get post info
-		$stmt = $dbh->prepare('SELECT post_id, post_body, username, image, content_type, p.date_created from posts p join accounts a on a.account_id = p.account_id where thread_id = :thread_id');
+		$stmt = $dbh->prepare('SELECT post_id, post_body, username, image, content_type, p.date_created, a.account_id from posts p join accounts a on a.account_id = p.account_id where thread_id = :thread_id');
 		$stmt->execute(array(':thread_id' => $thread_id));
 		$posts = $stmt->fetchAll();
 		return $this->render_action('thread', 'content', array('thread' => $thread, 'posts'=> $posts));

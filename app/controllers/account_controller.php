@@ -20,6 +20,7 @@ class account_controller extends controller {
 		if($results !== false) {
 			$_SESSION['username'] = $results['username'];
 			$_SESSION['account_id'] = $results['account_id'];
+			$_SESSION['admin'] = $results['admin'];
 			header('Location: /');
 		} else {
 			$view_data['error'] = 'There was a problem logging in.';
@@ -84,17 +85,17 @@ class account_controller extends controller {
 	}
 
 	public function profile($account_id = null) {
-		if($_SERVER['REQUEST_METHOD'] === 'POST') {
-			return $this->post_profile($account_id);
-		}
-
 		global $user;
 		if(empty($account_id)){
-			$account_id = $user['account_id'];
 			if(!is_array($user)) {
 				header('Location: /');
 				return "";
 			}
+			$account_id = $user['account_id'];
+		}
+
+		if($_SERVER['REQUEST_METHOD'] === 'POST') {
+			return $this->post_profile($account_id);
 		}
 		$dbh = $this->create_db_connection();
 		$stmt = $dbh->prepare('SELECT image, username, email, content_type from accounts where account_id = :account_id');
@@ -112,7 +113,7 @@ class account_controller extends controller {
 	}
 	private function post_profile($account_id) {
 		global $user;
-		if($account_id != $user['account_id']) {
+		if($account_id != $user['account_id'] || $user['admin']) {
 			return "";
 		}
 		$email = $_POST['email'];
@@ -216,9 +217,11 @@ class account_controller extends controller {
 				':token' => $token
 			));
 			$href = 'http://' . $_SERVER['SERVER_NAME'] . '/account/change_password/' . $token;
+
 			if(stripos($_SERVER['SERVER_NAME'], 'localhost') !== false) {
 				mail($email, "Password Recovery", "Your password has been reset, use this link to recover it $href. This link will remain valid for 1 hour.");
 			}
+
 			$view_data['error'] = 'A recovery email has been sent to the address provided.';
 
 		}

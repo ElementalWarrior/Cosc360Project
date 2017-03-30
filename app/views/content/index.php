@@ -15,7 +15,7 @@
 			<span class="replies"><?php echo $row['num_posts']; ?></span>
 		</div>
 		<h3><a href="/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
-		<span class="author"><?php echo $row['username']; ?></author>
+		<a href="/account/profile/<?php echo $row['account_id']; ?>" class="author"><?php echo $row['username']; ?></a>
 	</article>
 <?php } ?>
 	<?php if(is_array($user)) { ?>
