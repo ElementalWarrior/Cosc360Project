@@ -3,10 +3,10 @@
  ?>
 <section id="register" class="single-centered">
 	<form class="" id="frm-register" action="/account/register" method="post" enctype="multipart/form-data">
-		<?php if(!empty($view_data['error'])) {
-			echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";
-		}?>
-		<h3>Register:</h3>
+		<h2>Register:</h2>
+			<?php if(!empty($view_data['error'])) {
+				echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";
+			}?>
 		<div class="">
 			<input type="text" name="username" value="" placeholder="Username" required>
 		</div>
@@ -38,7 +38,7 @@
 			var pass = document.getElementById('password');
 			var check = document.getElementById('password-check');
 
-			if(pass !== check) {
+			if(pass.value !== check.value) {
 				alert('Passwords don\'t match');
 				e.preventDefault();
 			}

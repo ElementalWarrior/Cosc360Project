@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 require_once('helper.php');
 require_once('html_helper.php');
 require_once('config.php');
@@ -12,30 +11,39 @@ $action = 'index';
 $controller = 'content';
 $params = array();
 
+function error_page(&$action, &$controller) {
+	$action = 'file_not_found';
+	$controller = 'error';
+}
+
 $routing_info = check_route($_SERVER['REQUEST_URI']);
 switch($routing_info['code']) {
 
 	//404
 	case 0:
-	$action = 'file_not_found';
-	$controller = 'error';
-	break;
+		error_page($action, $controller);
+		break;
 
 	//mvc route
 	case 1:
-	$action = $routing_info['action'];
-	$controller = $routing_info['controller'];
-	$params = $routing_info['params'];
-	break;
+		$action = $routing_info['action'];
+		$controller = $routing_info['controller'];
+		$params = $routing_info['params'];
+		break;
 
 	//file found
 	case 2:
-	$path = resolve_path($routing_info['path']);
-	$ext = substr($path, strrpos($path, '.')+1);
-	$mime = mime_types()[$ext];
-	header("Content-Type:$mime");
-	readfile($path);
-	break;
+		$path = resolve_path($routing_info['path']);
+		if(is_file($path)) {
+			$ext = substr($path, strrpos($path, '.')+1);
+			$mime = mime_types()[$ext];
+			header("Content-Type:$mime");
+			readfile($path);
+		} else {
+			error_page($action, $controller);
+			$routing_info['code'] = 0;
+		}
+		break;
 }
 $user = null;
 if(!empty($_SESSION['account_id'])) {

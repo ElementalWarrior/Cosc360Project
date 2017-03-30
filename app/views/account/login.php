@@ -3,14 +3,17 @@ global $view_data;
  ?>
 <section id="login" class="single-centered">
 	<form class="" action="/account/login" method="post">
-		<h3>Login:</h3>
+		<h2>Login:</h2>
+			<?php if(!empty($view_data['error'])) {
+				echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";
+			}?>
 		<div class="">
 			<input type="text" name="username" value="" placeholder="Username" required>
 		</div>
 		<div class="">
 			<input type="password" name="password" value="" placeholder="Password" required>
 			<div class="">
-				<a href="/forgot-password.php">Forgot your password?</a>
+				<a href="/account/forgot_password">Forgot your password?</a>
 			</div>
 		</div>
 		<div class="text-center">

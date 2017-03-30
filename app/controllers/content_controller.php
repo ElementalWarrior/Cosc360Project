@@ -149,4 +149,17 @@ class content_controller extends controller{
 				'\_'
 			), $string);
 	}
+	public function hot_threads() {
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare('
+			select * from (
+			    select t.thread_id, thread_name, count(*) cnt from posts p join threads t on t.thread_id = p.thread_id where p.date_created > DATE_SUB(NOW(), INTERVAL 30*10000 MINUTE)
+			    group by thread_id, thread_name
+			    union ALL
+			    (select thread_id, thread_name, 0 from threads order by date_updated)) agg
+			group by thread_id, thread_name');
+		$stmt->execute();
+		$results = $stmt->fetchAll();
+		return $this->render_action('hot_threads', 'content');
+	}
 }
