@@ -9,6 +9,9 @@
 		<span class="fa fa-reply"></span>
 	</div>
 </div> -->
+<?php if(count($view_data) == 0) { ?>
+	<h2>There are no threads to show, why don't you create one?</h2>
+<?php } ?>
 <?php foreach($view_data as $row) { ?>
 	<article>
 		<div class="thread-right">
