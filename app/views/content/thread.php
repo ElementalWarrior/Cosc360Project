@@ -6,6 +6,11 @@
  ?>
 <?php Html::render_view('sidebar'); ?>
 <section id="thread">
+	<?php if($user['admin']) { ?>
+		<div class="text-right">
+			<a class="btn-alt" href="/content/edit_thread/<?php echo $thread['thread_id']; ?>" id="btnEditThread">Edit Thread</a>
+		</div>
+	<?php } ?>
 	<section class="thread-content">
 		<img src="data:image/<?php echo $thread['content_type'] . ';base64,' . base64_encode($thread['image']);?>" alt="">
 		<h3>
@@ -22,6 +27,7 @@
 			<a href="/account/profile/<?php echo $post['account_id']; ?>" class="author"><?php echo $post['username']; ?></a>
 			<p><?php echo Html::special_chars($post['post_body']); ?></p>
 			<?php if($user['admin']) { ?>
+				<a href="/content/edit_post/<?php echo $thread['thread_id']; ?>/<?php echo $post['post_id']; ?>" class="btn-alt btn-small btnEditPost">Edit Post</a>
 				<button type="button" name="button" class="btn-alt btn-small btnRemovePost" data-post-id="<?php echo $post['post_id']; ?>">Remove Thread</button>
 			<?php } ?>
 			<div class="date-posted"><?php echo $post['date_created']; ?></div>

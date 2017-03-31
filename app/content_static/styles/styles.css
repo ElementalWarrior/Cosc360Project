@@ -46,9 +46,13 @@ p {
 	border: 3px solid #d4abff;
 	border-width: 3px 0;
 	box-shadow: 0 0 2px 0 rgba(0,0,0,0.2);
+	color: #000;
 	cursor: pointer;
 	display: inline-block;
 	padding: 0.5rem 1rem;
+}
+.btn-alt:hover {
+	color: #333;
 }
 .btn-small {
 	font-size: 0.7rem;
@@ -272,6 +276,9 @@ main > * {
 	margin-top: 35px;
 	flex: 1;
 }
+#btnEditThread {
+	margin-bottom: 1rem;
+}
 .thread-content > h3 {
 	background: #fff7e4;
 	border: 4px solid #FFA552;
@@ -325,24 +332,24 @@ main > * {
 	resize: none;
 	width: 100%;
 }
-#new_thread {
+.manage_content {
 	flex: 1;
 	align-self: flex-start;
 	margin-top: 35px;
 }
-#new_thread .entry {
+.manage_content .entry {
 	background: #fff;
 	border-top: 4px solid #FFA552;
 	box-shadow: 0 6px 6px -4px rgba(0,0,0,0.1);
 	padding: 0.5rem;
 }
-#new_thread input,
-#new_thread textarea {
+.manage_content input,
+.manage_content textarea {
 	margin-bottom: 0.5rem;
 	max-width: 400px;
 	width: 100%;
 }
-#new_thread textarea {
+.manage_content textarea {
 	height: 100px;
 }
 #btnSubmitThread {

@@ -73,7 +73,7 @@ class content_controller extends controller{
 		$stmt = $dbh->prepare('INSERT into threads(thread_name, thread_body, account_id) select :thread_title, :thread_body, :account_id');
 		$stmt->execute(array(
 			':thread_title' => $thread_title,
-			':thread_body' => $thread_title,
+			':thread_body' => $thread_body,
 			':account_id' => $user['account_id'],
 		));
 		$stmt = $dbh->prepare('SELECT LAST_INSERT_ID() as id');
@@ -192,5 +192,105 @@ class content_controller extends controller{
 		$stmt->execute(array(
 			':post_id' => $post_id
 		));
+	}
+	public function edit_thread($thread_id) {
+		if(!is_array($user) || !$user['admin']) {
+			header('HTTP/1.0 403 Forbidden', true, 403);
+			return "";
+		}
+		$thread_id = (int)$thread_id;
+		if($_SERVER['REQUEST_METHOD'] === 'POST') {
+			return $this->post_edit_thread($thread_id);
+		}
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare('SELECT thread_name, thread_id, thread_name, thread_body from threads where thread_id = :thread_id');
+		$stmt->execute(array(
+			':thread_id' => $thread_id
+		));
+		$view_data = $stmt->fetch();
+
+		return $this->render_action('edit_thread', 'content', $view_data);
+	}
+
+	private function post_edit_thread($thread_id) {
+		global $user;
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare('SELECT thread_name, thread_id, thread_name, thread_body from threads where thread_id = :thread_id');
+		$stmt->execute(array(
+			':thread_id' => $thread_id
+		));
+		$view_data = $stmt->fetch();
+		$thread_title = trim($_POST['thread_title']);
+		$thread_body = trim($_POST['thread_body']);
+		$view_data['thread_name'] = $thread_title;
+		$view_data['thread_body'] = $thread_body;
+		if(strlen($thread_title) == 0 || strlen($thread_body) == 0) {
+			$view_data['error'] = 'Must enter title and body';
+			return $this->render_action('edit_thread', 'content', $view_data);
+		}
+
+		$stmt = $dbh->prepare('UPDATE threads set thread_name = :thread_name, thread_body = :thread_body where thread_id = :thread_id');
+		$stmt->execute(array(
+			':thread_name' => $thread_title,
+			':thread_body' => $thread_body,
+			':thread_id' => $thread_id
+		));
+		return $this->render_action('edit_thread', 'content', $view_data);
+	}
+	public function edit_post($thread_id, $post_id) {
+		if(!is_array($user) || !$user['admin']) {
+			header('HTTP/1.0 403 Forbidden', true, 403);
+			return "";
+		}
+		$post_id = (int)$post_id;
+		$thread_id = (int)$thread_id;
+		if(empty($thread_id) || empty($post_id)) {
+			header('Location: /error/server_error');
+			return "";
+		}
+		if($_SERVER['REQUEST_METHOD'] === 'POST') {
+			return $this->post_edit_post($thread_id, $post_id);
+		}
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare(
+			'SELECT (select thread_name from threads t where t.thread_id = p.thread_id limit 1) as thread_name, thread_id, post_id, post_body, a.account_id, a.username from posts p
+			join accounts a on a.account_id = p.account_id
+			where post_id = :post_id and thread_id = :thread_id');
+		$stmt->execute(array(
+			':thread_id' => $thread_id,
+			':post_id' => $post_id
+		));
+		$view_data = $stmt->fetch();
+
+		return $this->render_action('edit_post', 'content', $view_data);
+	}
+
+	private function post_edit_post($thread_id, $post_id) {
+		global $user;
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare(
+			'SELECT (select thread_name from threads t where t.thread_id = p.thread_id limit 1) as thread_name, thread_id, post_id, post_body, a.account_id, a.username from posts p
+			join accounts a on a.account_id = p.account_id
+			where post_id = :post_id and thread_id = :thread_id');
+		$stmt->execute(array(
+			':thread_id' => $thread_id,
+			':post_id' => $post_id
+		));
+		$view_data = $stmt->fetch();
+		$post_body = trim($_POST['post_body']);
+		$view_data['post_body'] = $post_body;
+
+		if(strlen($post_body) == 0) {
+			$view_data['error'] = 'Must enter body';
+			return $this->render_action('edit_post', 'content', $view_data);
+		}
+
+		$stmt = $dbh->prepare('UPDATE posts set post_body = :post_body where post_id = :post_id and thread_id = :thread_id');
+		$stmt->execute(array(
+			':post_body' => $post_body,
+			':post_id' => $post_id,
+			':thread_id' => $thread_id
+		));
+		return $this->render_action('edit_post', 'content', $view_data);
 	}
 }
