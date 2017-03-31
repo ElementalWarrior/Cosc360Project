@@ -315,7 +315,7 @@ class account_controller extends controller {
 				':password' => md5($password),
 				':token' => $token
 			));
-			$view_data['error'] = 'Password has been reset, proceed to <a href="/account/login/">login page</a> to login with your new password.';
+			$view_data['error'] = 'Password has been reset, proceed to <a href="<?php global $sub_path; echo $sub_path; ?>/account/login/">login page</a> to login with your new password.';
 		}
 
 		return $this->render_action('recover_password', 'account', $view_data);

@@ -20,13 +20,13 @@
 				<button type="button" name="button" class="btn-alt btn-small btnRemoveThread" data-thread-id="<?php echo $row['thread_id']; ?>">Remove Thread</button>
 			<?php } ?>
 		</div>
-		<h3><a href="/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
-		<a href="/account/profile/<?php echo $row['account_id']; ?>" class="author"><?php echo $row['username']; ?></a>
+		<h3><a href="<?php global $sub_path; echo $sub_path; ?>/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
+		<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $row['account_id']; ?>" class="author"><?php echo $row['username']; ?></a>
 	</article>
 <?php } ?>
 	<?php if(is_array($user)) { ?>
 	<div class="text-right">
-		<a href="/content/new_thread/" class="btn">New Thread</a>
+		<a href="<?php global $sub_path; echo $sub_path; ?>/content/new_thread/" class="btn">New Thread</a>
 	</div>
 	<?php } ?>
 </section>

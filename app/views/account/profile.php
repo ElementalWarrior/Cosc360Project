@@ -4,7 +4,7 @@ global $user;
 $allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_id'] || $user['admin']);
  ?>
 <section id="profile" class="single-centered">
-   <form class="" id="frm-profile" action="/account/profile/<?php echo $view_data['account_id']; ?>" method="post" enctype="multipart/form-data">
+   <form class="" id="frm-profile" action="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $view_data['account_id']; ?>" method="post" enctype="multipart/form-data">
 		<h2>Profile:</h2>
 		<?php if(!empty($view_data['error'])) {
 			echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";

@@ -6,7 +6,7 @@
  ?>
 
 <section id="edit_post" class="manage_content">
-	<form class="" action="/content/edit_post/<?php echo $view_data['thread_id']; ?>/<?php echo $view_data['post_id']; ?>" method="post">
+	<form class="" action="<?php global $sub_path; echo $sub_path; ?>/content/edit_post/<?php echo $view_data['thread_id']; ?>/<?php echo $view_data['post_id']; ?>" method="post">
 		<div class="entry">
 			<?php if($view_data != null && !empty($view_data['error'])) {
 				echo "<h2><strong>" . $view_data['error'] . "</strong></h2>";
@@ -19,7 +19,7 @@
 				<h3>Preview</h3>
 				<div class="post">
 					<div class="response-by">Response By:</div>
-					<a href="/account/profile/<?php echo $view_data['account_id']; ?>" class="author"><?php echo $view_data['username']; ?></a>
+					<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $view_data['account_id']; ?>" class="author"><?php echo $view_data['username']; ?></a>
 					<p id="preview-body"></p>
 				</div>
 			</section>

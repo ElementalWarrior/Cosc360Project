@@ -6,12 +6,6 @@ require_once('config.php');
 require_once('controllers/controller.php');
 app_include('routing.php');
 
-$path = $_SERVER['REQUEST_URI'];
-
-$action = 'index';
-$controller = 'content';
-$params = array();
-
 function handle_error($errno, $errstr, $errfile, $errline) {
 	$msg = "";
 	switch ($errno) {
@@ -50,12 +44,26 @@ function handle_error($errno, $errstr, $errfile, $errline) {
 }
 set_error_handler('handle_error');
 
+$file = array_reverse(explode('/', $_SERVER['SCRIPT_NAME']))[0];
+$sub_path = str_replace($file, '', $_SERVER['SCRIPT_NAME']);
+$sub_path = substr($sub_path, 0, strlen($sub_path)-1);
+$path = '';
+if($sub_path !== '/') {
+	$path = str_replace($sub_path, '', $_SERVER['REQUEST_URI']);
+} else {
+	$path = $_SERVER['REQUEST_URI'];
+}
+
+$action = 'index';
+$controller = 'content';
+$params = array();
+
 function error_page(&$action, &$controller) {
 	$action = 'file_not_found';
 	$controller = 'error';
 }
 
-$routing_info = check_route($_SERVER['REQUEST_URI']);
+$routing_info = check_route($path);
 switch($routing_info['code']) {
 
 	//404

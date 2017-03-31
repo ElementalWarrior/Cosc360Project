@@ -2,7 +2,7 @@
 	global $view_data;
  ?>
 <section id="register" class="single-centered">
-	<form class="" id="frm-register" action="/account/register" method="post" enctype="multipart/form-data">
+	<form class="" id="frm-register" action="<?php global $sub_path; echo $sub_path; ?>/account/register" method="post" enctype="multipart/form-data">
 		<h2>Register:</h2>
 			<?php if(!empty($view_data['error'])) {
 				echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";

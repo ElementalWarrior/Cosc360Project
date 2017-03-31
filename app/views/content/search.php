@@ -6,7 +6,7 @@ Html::render_view('sidebar');
 <section id="search">
 	<div id="query">
 
-		<form class="" action="/content/search" method="post">
+		<form class="" action="<?php global $sub_path; echo $sub_path; ?>/content/search" method="post">
 
 			<h2>Search</h2>
 			<p>Search by either Username, Email, or post content</p>
@@ -35,7 +35,7 @@ Html::render_view('sidebar');
 		if(!$hide_image) {
 			echo '<img id="search-image" class="search-image" src="data:image/' . $user['content_type'] . ';base64,' . base64_encode($user['image']) . '" alt="">';
 		}
-		echo '<div class="search-username">' . ($include_by ? 'by ' : '') . '<a href="/account/profile/' . $user['account_id'] . '">' . str_replace($view_data['username'], '<span class="underline">' . $view_data['username'] . '</span>', $user['username']) . '</a></div>';
+		echo '<div class="search-username">' . ($include_by ? 'by ' : '') . '<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/' . $user['account_id'] . '">' . str_replace($view_data['username'], '<span class="underline">' . $view_data['username'] . '</span>', $user['username']) . '</a></div>';
 		if(!$hide_email) {
 			echo '<div class="search-email">' . str_replace($view_data['email'], '<span class="underline">' . $view_data['email'] . '</span>', $user['email']) . '</div>';
 		}
@@ -81,7 +81,7 @@ Html::render_view('sidebar');
 					);
 					echo '<li><div class="post_header">';
 					render_user($user, true);
-					echo '<h4><a href="/content/thread/' . $search['thread_id'] . '">' . str_replace($view_data['posts'], '<span class="underline">' . $view_data['posts'] . '</span>', Html::special_chars($search['thread_name'])) . '</a></h4>';
+					echo '<h4><a href="<?php global $sub_path; echo $sub_path; ?>/content/thread/' . $search['thread_id'] . '">' . str_replace($view_data['posts'], '<span class="underline">' . $view_data['posts'] . '</span>', Html::special_chars($search['thread_name'])) . '</a></h4>';
 					echo '<p>' . str_replace($view_data['posts'], '<span class="underline">' . $view_data['posts'] . '</span>', Html::special_chars($search['thread_body'])) . '</p></div>';
 					echo '<ul class="ui-posts striped">';
 				}

@@ -6,7 +6,7 @@
  ?>
 
 <section id="edit_thread" class="manage_content">
-	<form class="" action="/content/edit_thread/<?php echo $view_data['thread_id']; ?>" method="post">
+	<form class="" action="<?php global $sub_path; echo $sub_path; ?>/content/edit_thread/<?php echo $view_data['thread_id']; ?>" method="post">
 		<div class="entry">
 			<?php if($view_data != null && !empty($view_data['error'])) {
 				echo "<h2><strong>" . $view_data['error'] . "</strong></h2>";

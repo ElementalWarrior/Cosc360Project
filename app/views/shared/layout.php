@@ -3,9 +3,9 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<link rel="stylesheet" href="/content_static/styles/styles.css">
+		<link rel="stylesheet" href="<?php global $sub_path; echo $sub_path; ?>/content_static/styles/styles.css">
 		<title>Index</title>
-		<script src="/content_static/scripts/jquery-3.2.0.min.js"></script>
+		<script src="<?php global $sub_path; echo $sub_path; ?>/content_static/scripts/jquery-3.2.0.min.js"></script>
 		<script type="text/javascript">
 			function Breadcrumbs(crumbs) {
 				var html = "";

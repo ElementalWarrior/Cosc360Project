@@ -8,14 +8,14 @@
 <section id="thread">
 	<?php if($user['admin']) { ?>
 		<div class="text-right">
-			<a class="btn-alt" href="/content/edit_thread/<?php echo $thread['thread_id']; ?>" id="btnEditThread">Edit Thread</a>
+			<a class="btn-alt" href="<?php global $sub_path; echo $sub_path; ?>/content/edit_thread/<?php echo $thread['thread_id']; ?>" id="btnEditThread">Edit Thread</a>
 		</div>
 	<?php } ?>
 	<section class="thread-content">
 		<img src="data:image/<?php echo $thread['content_type'] . ';base64,' . base64_encode($thread['image']);?>" alt="">
 		<h3>
 			<?php echo Html::special_chars($thread['thread_name']); ?>
-			<a href="/account/profile/<?php echo $thread['account_id']; ?>" class="author"><?php echo Html::special_chars($thread['username']); ?></a>
+			<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $thread['account_id']; ?>" class="author"><?php echo Html::special_chars($thread['username']); ?></a>
 		</h3>
 		<p><?php echo Html::special_chars($thread['thread_body']); ?></p>
 	</section>
@@ -24,10 +24,10 @@
 		<div class="post">
 			<img src="data:image/<?php echo $post['content_type'] . ';base64,' . base64_encode($post['image']);?>" alt="">
 			<div class="response-by">Response By:</div>
-			<a href="/account/profile/<?php echo $post['account_id']; ?>" class="author"><?php echo $post['username']; ?></a>
+			<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $post['account_id']; ?>" class="author"><?php echo $post['username']; ?></a>
 			<p><?php echo Html::special_chars($post['post_body']); ?></p>
 			<?php if($user['admin']) { ?>
-				<a href="/content/edit_post/<?php echo $thread['thread_id']; ?>/<?php echo $post['post_id']; ?>" class="btn-alt btn-small btnEditPost">Edit Post</a>
+				<a href="<?php global $sub_path; echo $sub_path; ?>/content/edit_post/<?php echo $thread['thread_id']; ?>/<?php echo $post['post_id']; ?>" class="btn-alt btn-small btnEditPost">Edit Post</a>
 				<button type="button" name="button" class="btn-alt btn-small btnRemovePost" data-post-id="<?php echo $post['post_id']; ?>">Remove Thread</button>
 			<?php } ?>
 			<div class="date-posted"><?php echo $post['date_created']; ?></div>
@@ -37,7 +37,7 @@
 	<?php if(is_array($user)) { ?>
 	<section id="respond">
 		<h3>Post a response:</h3>
-		<form class="" action="/content/reply/<?php echo Html::special_chars($thread['thread_id']); ?>" method="post">
+		<form class="" action="<?php global $sub_path; echo $sub_path; ?>/content/reply/<?php echo Html::special_chars($thread['thread_id']); ?>" method="post">
 			<textarea name="respond" rows="8" cols="80" required></textarea>
 			<input type="submit" name="submit" value="Submit your response!">
 		</form>

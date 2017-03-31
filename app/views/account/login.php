@@ -2,7 +2,7 @@
 global $view_data;
  ?>
 <section id="login" class="single-centered">
-	<form class="" action="/account/login" method="post">
+	<form class="" action="<?php global $sub_path; echo $sub_path; ?>/account/login" method="post">
 		<h2>Login:</h2>
 			<?php if(!empty($view_data['error'])) {
 				echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";
@@ -13,7 +13,7 @@ global $view_data;
 		<div class="">
 			<input type="password" name="password" value="" placeholder="Password" required>
 			<div class="">
-				<a href="/account/forgot_password">Forgot your password?</a>
+				<a href="<?php global $sub_path; echo $sub_path; ?>/account/forgot_password">Forgot your password?</a>
 			</div>
 		</div>
 		<div class="text-center">

@@ -19,7 +19,7 @@ function app_file_exists ($path) {
 	return file_exists($phys_path . $path);
 }
 function resolve_path($path) {
-	global $phys_path;
+	global$phys_path;
 	return $phys_path . $path;
 }
 //http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
