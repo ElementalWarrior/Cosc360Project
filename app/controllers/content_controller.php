@@ -4,7 +4,7 @@ class content_controller extends controller{
 	public function index() {
 		$dbh = $this->create_db_connection();
 		$threads = array();
-		foreach($dbh->query('SELECT thread_id, thread_name, username, num_posts, a.account_id from threads t join accounts a on a.account_id = t.account_id order by date_updated desc') as $row) {
+		foreach($dbh->query('SELECT thread_id, thread_name, username, num_posts, a.account_id from threads t join accounts a on a.account_id = t.account_id where date_deleted is null order by date_updated desc') as $row) {
 			$threads[] = $row;
 		}
 		return $this->render_action('index', 'content', $threads);
@@ -19,7 +19,7 @@ class content_controller extends controller{
 		$thread = $stmt->fetch();
 
 		//get post info
-		$stmt = $dbh->prepare('SELECT post_id, post_body, username, image, content_type, p.date_created, a.account_id from posts p join accounts a on a.account_id = p.account_id where thread_id = :thread_id');
+		$stmt = $dbh->prepare('SELECT post_id, post_body, username, image, content_type, p.date_created, a.account_id from posts p join accounts a on a.account_id = p.account_id where thread_id = :thread_id and date_deleted is null');
 		$stmt->execute(array(':thread_id' => $thread_id));
 		$posts = $stmt->fetchAll();
 		return $this->render_action('thread', 'content', array('thread' => $thread, 'posts'=> $posts));
@@ -34,7 +34,7 @@ class content_controller extends controller{
 
 		$dbh = $this->create_db_connection();
 		$dbh->beginTransaction();
-		$stmt = $dbh->prepare('INSERT into posts(thread_id, post_body, account_id) select :thread_id, :post_body, :account_id');
+		$stmt = $dbh->prepare('INSERT into posts(thread_id, post_body, account_id) select :thread_id, :post_body, :account_id from threads where thread_id = :thread_id and date_deleted is null');
 		$post_body = $_POST['respond'];
 		if(!is_numeric($thread_id) || strlen($post_body) == 0) {
 			$dbh->rollBack();
@@ -46,7 +46,7 @@ class content_controller extends controller{
 			, ':post_body' => $post_body
 			, ':account_id' => $user['account_id']
 		));
-		$stmt = $dbh->prepare('UPDATE threads set num_posts = num_posts+1, date_updated = current_timestamp() where thread_id = :thread_id');
+		$stmt = $dbh->prepare('UPDATE threads set num_posts = num_posts+1, date_updated = current_timestamp() where thread_id = :thread_id and date_deleted is null');
 		$stmt->execute(array(':thread_id' => $thread_id));
 		$dbh->commit();
 		header('Location: ' . $_SERVER['HTTP_REFERER']);
@@ -161,5 +161,36 @@ class content_controller extends controller{
 		$stmt->execute();
 		$results = $stmt->fetchAll();
 		return $this->render_action('hot_threads', 'content');
+	}
+
+	public function remove_thread($thread_id) {
+		global $user;
+		if(!is_array($user) || !$user['admin']) {
+			header('HTTP/1.0 403 Forbidden', true, 403);
+			return "";
+		}
+		$thread_id = (int)$thread_id;
+
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare('
+			UPDATE threads set date_deleted = now() where thread_id = :thread_id');
+		$stmt->execute(array(
+			':thread_id' => $thread_id
+		));
+	}
+	public function remove_post($post_id) {
+		global $user;
+		if(!is_array($user) || !$user['admin']) {
+			header('HTTP/1.0 403 Forbidden', true, 403);
+			return "";
+		}
+		$post_id = (int)$post_id;
+
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare('
+			UPDATE posts set date_deleted = now() where post_id = :post_id');
+		$stmt->execute(array(
+			':post_id' => $post_id
+		));
 	}
 }

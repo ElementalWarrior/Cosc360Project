@@ -21,6 +21,9 @@
 			<div class="response-by">Response By:</div>
 			<a href="/account/profile/<?php echo $post['account_id']; ?>" class="author"><?php echo $post['username']; ?></a>
 			<p><?php echo Html::special_chars($post['post_body']); ?></p>
+			<?php if($user['admin']) { ?>
+				<button type="button" name="button" class="btn-alt btn-small btnRemovePost" data-post-id="<?php echo $post['post_id']; ?>">Remove Thread</button>
+			<?php } ?>
 			<div class="date-posted"><?php echo $post['date_created']; ?></div>
 		</div>
 		<?php } ?>
@@ -48,4 +51,17 @@
 		}
 	]
 	$(document).ready(Breadcrumbs(crumbs))
+</script>
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('.btnRemovePost').on('click', function(e) {
+			var post_id = $(e.target).attr('data-post-id');
+			$('[data-post-id=' + post_id + ']').closest('.post').remove();
+			$.ajax({url: '/content/remove_post/' + post_id}).fail(function() {
+				alert('There was a problem removing the post');
+			});
+		});
+	})
 </script>

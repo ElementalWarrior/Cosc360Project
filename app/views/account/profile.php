@@ -56,11 +56,11 @@ $allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_i
 				<?php if($view_data['active'] && $view_data['account_id'] != $user['account_id']) { ?>
 					Account is active
 					<br>
-					<button type="button" name="button" class="btn" id="toggleAccountStatus">Click to disable</button>
+					<button type="button" name="button" class="btn-alt" id="toggleAccountStatus">Click to disable</button>
 				<?php } else { ?>
 					Account is in-active
 					<br>
-					<button type="button" name="button" class="btn" id="toggleAccountStatus">Click to enable</button>
+					<button type="button" name="button" class="btn-alt" id="toggleAccountStatus">Click to enable</button>
 				<?php } ?>
 			</td>
 		</tr>
@@ -122,7 +122,7 @@ $allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_i
 
 	function RenderStatus(status) {
 		console.log(status);
-		$('#tdStatus').html('Account is ' + (status ? 'active' : 'in-active') + '<br><button type="button" name="button" class="btn" id="toggleAccountStatus">Click to ' + (status ? 'disable' : 'enable') + '</button>')
+		$('#tdStatus').html('Account is ' + (status ? 'active' : 'in-active') + '<br><button type="button" name="button" class="btn-alt" id="toggleAccountStatus">Click to ' + (status ? 'disable' : 'enable') + '</button>')
 	}
 	var accountStatus = <?php echo $view_data['active'] ? 'true' : 'false'; ?>;
 	$('body').on('click', '#toggleAccountStatus', function() {
