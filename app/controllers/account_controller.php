@@ -94,13 +94,18 @@ class account_controller extends controller {
 			$account_id = $user['account_id'];
 		}
 
-		if($_SERVER['REQUEST_METHOD'] === 'POST') {
-			return $this->post_profile($account_id);
-		}
 		$dbh = $this->create_db_connection();
 		$stmt = $dbh->prepare('SELECT image, username, email, content_type, date_disabled from accounts where account_id = :account_id');
 		$stmt->execute(array(':account_id' => $account_id));
 		$results = $stmt->fetch();
+
+		if((empty($user) || !$user['admin']) && !is_null($results['date_disabled'])) {
+			return $this->render_action('profile_disabled', 'account');
+		}
+
+		if($_SERVER['REQUEST_METHOD'] === 'POST') {
+			return $this->post_profile($account_id);
+		}
 
 		$view_data = array(
 			'account_id' => $account_id,
