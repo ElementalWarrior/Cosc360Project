@@ -22,7 +22,7 @@ class account_controller extends controller {
 			$_SESSION['account_id'] = $results['account_id'];
 			$_SESSION['admin'] = $results['admin'];
 			global $sub_path;
-			header("Location: $sub_path");
+			header("Location: $sub_path/");
 		} else {
 			$view_data['error'] = 'There was a problem logging in.';
 		}
@@ -31,7 +31,7 @@ class account_controller extends controller {
 	public function logout() {
 		session_unset();
 		global $sub_path;
-		header("Location: $sub_path");
+		header("Location: $sub_path/");
 	}
 	public function register() {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -97,7 +97,7 @@ class account_controller extends controller {
 		if(empty($account_id)){
 			if(!is_array($user)) {
 				global $sub_path;
-				header("Location: $sub_path");
+				header("Location: $sub_path/");
 				return "";
 			}
 			$account_id = $user['account_id'];
@@ -326,7 +326,8 @@ class account_controller extends controller {
 				':password' => md5($password),
 				':token' => $token
 			));
-			$view_data['error'] = 'Password has been reset, proceed to <a href="<?php global $sub_path; echo $sub_path; ?>/account/login/">login page</a> to login with your new password.';
+			global $sub_path;
+			$view_data['error'] = 'Password has been reset, proceed to <a href="' . echo $sub_path . '/account/login/">login page</a> to login with your new password.';
 		}
 
 		return $this->render_action('recover_password', 'account', $view_data);
