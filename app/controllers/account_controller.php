@@ -22,7 +22,6 @@ class account_controller extends controller {
 			$_SESSION['account_id'] = $results['account_id'];
 			$_SESSION['admin'] = $results['admin'];
 			global $sub_path;
-			fwrite(STDERR, "Location: $sub_path");
 			header("Location: $sub_path");
 		} else {
 			$view_data['error'] = 'There was a problem logging in.';
