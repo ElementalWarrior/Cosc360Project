@@ -345,6 +345,7 @@ main > * {
 }
 .manage_content input,
 .manage_content textarea {
+	display: block;
 	margin-bottom: 0.5rem;
 	max-width: 400px;
 	width: 100%;

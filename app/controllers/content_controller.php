@@ -194,6 +194,7 @@ class content_controller extends controller{
 		));
 	}
 	public function edit_thread($thread_id) {
+		global $user;
 		if(!is_array($user) || !$user['admin']) {
 			header('HTTP/1.0 403 Forbidden', true, 403);
 			return "";
@@ -238,6 +239,7 @@ class content_controller extends controller{
 		return $this->render_action('edit_thread', 'content', $view_data);
 	}
 	public function edit_post($thread_id, $post_id) {
+		global $user;
 		if(!is_array($user) || !$user['admin']) {
 			header('HTTP/1.0 403 Forbidden', true, 403);
 			return "";

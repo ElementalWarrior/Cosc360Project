@@ -40,7 +40,7 @@ class account_controller extends controller {
 	}
 
 	private function post_register() {
-		$username = trim($_POST['username']);
+		$username = Html::special_chars(trim($_POST['username']));
 		$password = $_POST['password'];
 		$password_check = $_POST['password-check'];
 		$email = $_POST['email'];
@@ -54,6 +54,12 @@ class account_controller extends controller {
 		|| empty($_FILES['image'])
 		|| getimagesize($_FILES["image"]["tmp_name"]) === false) {
 			return $this->render_action('register', 'account', array('error' => 'All fields must be filled out, passwords must match, and there must be an image (jpg, gif, png) uploaded.'));
+		}
+		if(strlen($username) > 25) {
+			return $this->render_action('register', 'account', array('error' => 'Username can only be up to 25 characters.'));
+		}
+		if(strlen($email) > 250) {
+			return $this->render_action('register', 'account', array('error' => 'Email can only be up to 250 characters.'));
 		}
 		if(!empty($_FILES['image']) && $_FILES['image']['size'] > 200*1024) {
 
