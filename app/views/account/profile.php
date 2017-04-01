@@ -44,26 +44,28 @@ $allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_i
 				<button type="button" name="button" class="btn-alt" id="changeImage">Change Image</button></td>
 				<?php } ?>
 		</tr>
-		<tr>
-			<td>
-				<?php if($view_data['active']) { ?>
-					<strong>Account Status:</strong>
-				<?php } else { ?>
+		<?php if(is_array($user) && $user['admin'] && $view_data['account_id'] != $user['account_id']) { ?>
+			<tr>
+				<td>
+					<?php if($view_data['active']) { ?>
+						<strong>Account Status:</strong>
+					<?php } else { ?>
 
-				<?php } ?>
-			</td>
-			<td id="tdStatus">
-				<?php if($view_data['active'] && $view_data['account_id'] != $user['account_id']) { ?>
-					Account is active
-					<br>
-					<button type="button" name="button" class="btn-alt" id="toggleAccountStatus">Click to disable</button>
-				<?php } else { ?>
-					Account is in-active
-					<br>
-					<button type="button" name="button" class="btn-alt" id="toggleAccountStatus">Click to enable</button>
-				<?php } ?>
-			</td>
-		</tr>
+					<?php } ?>
+				</td>
+				<td id="tdStatus">
+					<?php if($view_data['active']) { ?>
+						Account is active
+						<br>
+						<button type="button" name="button" class="btn-alt" id="toggleAccountStatus">Click to disable</button>
+					<?php } else { ?>
+						Account is in-active
+						<br>
+						<button type="button" name="button" class="btn-alt" id="toggleAccountStatus">Click to enable</button>
+					<?php } ?>
+				</td>
+			</tr>
+		<?php } ?>
 		<?php if($allow_submit){ ?>
 		<tr>
 			<td colspan="2">

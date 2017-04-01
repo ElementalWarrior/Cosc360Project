@@ -168,9 +168,6 @@ main > * {
 	width: 100%;
 }
 /************************ home page styles *************************/
-#posts {
-	margin-top: 35px;
-}
 #posts article,
 #sidebar article,
 .post {
@@ -182,9 +179,6 @@ main > * {
 }
 #sidebar article {
 	border-color: #ac52ff;
-}
-#sidebar {
-	margin-top: 35px;
 }
 @media screen and (max-width: 767px) {
 	#sidebar {
@@ -273,7 +267,6 @@ main > * {
 }
 /************************ thread page  *************************/
 #thread {
-	margin-top: 35px;
 	flex: 1;
 }
 #btnEditThread {

@@ -8,8 +8,9 @@
 <section id="edit_post" class="manage_content">
 	<form class="" action="<?php global $sub_path; echo $sub_path; ?>/content/edit_post/<?php echo $view_data['thread_id']; ?>/<?php echo $view_data['post_id']; ?>" method="post">
 		<div class="entry">
+			<h2>Edit Post</h2>
 			<?php if($view_data != null && !empty($view_data['error'])) {
-				echo "<h2><strong>" . $view_data['error'] . "</strong></h2>";
+				echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";
 			}?>
 			<textarea name="post_body" id="post_body" placeholder="Post Body" required><?php echo $view_data['post_body']; ?></textarea>
 		</div>
