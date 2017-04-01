@@ -48,6 +48,9 @@ set_error_handler('handle_error');
 $file = array_reverse(explode('/', $_SERVER['SCRIPT_NAME']))[0];
 $sub_path = str_replace($file, '', $_SERVER['SCRIPT_NAME']);
 $sub_path = substr($sub_path, 0, strlen($sub_path)-1);
+if(strlen($sub_path) == 0) {
+	$sub_path = '/';
+}
 $path = '';
 if($sub_path !== '/') {
 	$path = str_replace($sub_path, '', $_SERVER['REQUEST_URI']);
