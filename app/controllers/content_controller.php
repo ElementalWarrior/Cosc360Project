@@ -28,7 +28,8 @@ class content_controller extends controller{
 		global $user;
 		echo $thread_id;
 		if($_SERVER['REQUEST_METHOD'] !== 'POST') {
-			header('Location: /');
+			global $sub_path;
+			header("Location: #sub_path");
 			die();
 		}
 
@@ -79,7 +80,7 @@ class content_controller extends controller{
 		$stmt = $dbh->prepare('SELECT LAST_INSERT_ID() as id');
 		$stmt->execute();
 		$id = $stmt->fetch()['id'];
-		header("Location: /content/thread/$id");
+		header("Location: $sub_path/content/thread/$id");
 	}
 	public function search() {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -130,9 +131,11 @@ class content_controller extends controller{
 				left join posts p on t.thread_id = p.thread_id and p.post_body like :post
 				join accounts a1 on t.account_id = a1.account_id
 				left join accounts a2 on p.account_id = a2.account_id
-				where thread_name like :post
+				where (thread_name like :post
 				or thread_body like :post
-				or post_body like :post');
+				or post_body like :post)
+				and t.date_deleted is null
+				and p.date_deleted is null');
 			$stmt->execute(array(':post' => '%' . $search_post . '%'));
 			$view_data['content_results'] = $stmt->fetchAll();
 		}
@@ -247,7 +250,7 @@ class content_controller extends controller{
 		$post_id = (int)$post_id;
 		$thread_id = (int)$thread_id;
 		if(empty($thread_id) || empty($post_id)) {
-			header('Location: /error/server_error');
+			header("Location: $sub_path/error/server_error");
 			return "";
 		}
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {

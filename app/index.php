@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set("America/Vancouver");
 session_start();
 require_once('helper.php');
 require_once('html_helper.php');

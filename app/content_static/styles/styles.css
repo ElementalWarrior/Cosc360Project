@@ -328,7 +328,6 @@ main > * {
 .manage_content {
 	flex: 1;
 	align-self: flex-start;
-	margin-top: 35px;
 }
 .manage_content .entry {
 	background: #fff;
@@ -386,7 +385,6 @@ main > * {
 
 	background-color: #fffcf4;
 	border: 1px solid #fff2e7;
-	margin-top: 35px;
 	padding-bottom: 20px;
 	text-align: center;
 }

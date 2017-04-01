@@ -1,5 +1,6 @@
 <?php
 global $view_data;
+global $sub_path;
 Html::render_view('sidebar');
 ?>
 
@@ -31,17 +32,21 @@ Html::render_view('sidebar');
 	<?php
 	function render_user($user, $hide_email = false, $hide_image = false, $include_by = false) {
 		global $view_data;
+		global $sub_path;
 		echo '<div class="user">';
 		if(!$hide_image) {
 			echo '<img id="search-image" class="search-image" src="data:image/' . $user['content_type'] . ';base64,' . base64_encode($user['image']) . '" alt="">';
 		}
-		echo '<div class="search-username">' . ($include_by ? 'by ' : '') . '<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/' . $user['account_id'] . '">' . str_replace($view_data['username'], '<span class="underline">' . $view_data['username'] . '</span>', $user['username']) . '</a></div>';
+		echo '<div class="search-username">' . ($include_by ? 'by ' : '') . '<a href="' . $sub_path . '/account/profile/' . $user['account_id'] . '">' . str_replace($view_data['username'], '<span class="underline">' . $view_data['username'] . '</span>', $user['username']) . '</a></div>';
 		if(!$hide_email) {
 			echo '<div class="search-email">' . str_replace($view_data['email'], '<span class="underline">' . $view_data['email'] . '</span>', $user['email']) . '</div>';
 		}
 		echo '</div>';
 	}
 	 ?>
+	 <?php if(empty($view_data['user_results']) && empty($view_data['content_results'])) { ?>
+		 <h2>There are no results to display.</h2>
+	 <?php }?>
 	<?php if(!empty($view_data['user_results'])) { ?>
 	<div id="user_results" class="results">
 		<h2>Results:</h2>
@@ -81,7 +86,7 @@ Html::render_view('sidebar');
 					);
 					echo '<li><div class="post_header">';
 					render_user($user, true);
-					echo '<h4><a href="<?php global $sub_path; echo $sub_path; ?>/content/thread/' . $search['thread_id'] . '">' . str_replace($view_data['posts'], '<span class="underline">' . $view_data['posts'] . '</span>', Html::special_chars($search['thread_name'])) . '</a></h4>';
+					echo '<h4><a href="' . $sub_path . '/content/thread/' . $search['thread_id'] . '">' . str_replace($view_data['posts'], '<span class="underline">' . $view_data['posts'] . '</span>', Html::special_chars($search['thread_name'])) . '</a></h4>';
 					echo '<p>' . str_replace($view_data['posts'], '<span class="underline">' . $view_data['posts'] . '</span>', Html::special_chars($search['thread_body'])) . '</p></div>';
 					echo '<ul class="ui-posts striped">';
 				}
