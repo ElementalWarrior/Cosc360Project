@@ -50,7 +50,7 @@ class content_controller extends controller{
 		$stmt = $dbh->prepare('UPDATE threads set num_posts = num_posts+1, date_updated = current_timestamp() where thread_id = :thread_id and date_deleted is null');
 		$stmt->execute(array(':thread_id' => $thread_id));
 		$dbh->commit();
-		header("Location: $sub_path/thread/$thread_id");
+		header("Location: $sub_path/content/thread/$thread_id");
 	}
 	public function new_thread() {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
