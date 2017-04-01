@@ -327,7 +327,7 @@ class account_controller extends controller {
 				':token' => $token
 			));
 			global $sub_path;
-			$view_data['error'] = 'Password has been reset, proceed to <a href="' . echo $sub_path . '/account/login/">login page</a> to login with your new password.';
+			$view_data['error'] = 'Password has been reset, proceed to <a href="' . $sub_path . '/account/login/">login page</a> to login with your new password.';
 		}
 
 		return $this->render_action('recover_password', 'account', $view_data);
