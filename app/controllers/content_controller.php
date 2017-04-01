@@ -29,9 +29,10 @@ class content_controller extends controller{
 		echo $thread_id;
 		if($_SERVER['REQUEST_METHOD'] !== 'POST') {
 			global $sub_path;
-			header("Location: #sub_path");
+			header("Location: $sub_path/");
 			die();
 		}
+		$thread_id = (int)$thread_id;
 
 		$dbh = $this->create_db_connection();
 		$dbh->beginTransaction();
@@ -41,7 +42,6 @@ class content_controller extends controller{
 			$dbh->rollBack();
 			return;
 		}
-		$thread_id = (int)$thread_id;
 		$stmt->execute(array(
 			':thread_id' => $thread_id
 			, ':post_body' => $post_body
