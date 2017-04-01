@@ -22,7 +22,7 @@ class account_controller extends controller {
 			$_SESSION['account_id'] = $results['account_id'];
 			$_SESSION['admin'] = $results['admin'];
 			global $sub_path;
-			header("Location: $sub_path");
+			header("Location: /$sub_path");
 		} else {
 			$view_data['error'] = 'There was a problem logging in.';
 		}
@@ -31,7 +31,7 @@ class account_controller extends controller {
 	public function logout() {
 		session_unset();
 		global $sub_path;
-		header("Location: $sub_path");
+		header("Location: /$sub_path");
 	}
 	public function register() {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -97,7 +97,7 @@ class account_controller extends controller {
 		if(empty($account_id)){
 			if(!is_array($user)) {
 				global $sub_path;
-				header("Location: $sub_path");
+				header("Location: /$sub_path");
 				return "";
 			}
 			$account_id = $user['account_id'];
@@ -285,7 +285,7 @@ class account_controller extends controller {
 	public function recover_password($token) {
 		if(empty($token)) {
 			global $sub_path;
-			header("Location: $sub_path/error/file_not_found");
+			header("Location: /$sub_path/error/file_not_found");
 			return "";
 		}
 		$dbh = $this->create_db_connection();
@@ -295,7 +295,7 @@ class account_controller extends controller {
 		$results = $stmt->fetchAll();
 		if(count($results) == 0 || ((int)$results[0]['time_left']) < 0) {
 			global $sub_path;
-			header("Location: $sub_path/error/file_not_found");
+			header("Location: /$sub_path/error/file_not_found");
 			return "";
 		}
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {

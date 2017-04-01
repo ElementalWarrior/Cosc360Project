@@ -54,8 +54,6 @@ if($sub_path !== '/') {
 } else {
 	$path = $_SERVER['REQUEST_URI'];
 }
-echo $sub_path;
-die();
 $action = 'index';
 $controller = 'content';
 $params = array();

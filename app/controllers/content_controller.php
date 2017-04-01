@@ -80,7 +80,7 @@ class content_controller extends controller{
 		$stmt = $dbh->prepare('SELECT LAST_INSERT_ID() as id');
 		$stmt->execute();
 		$id = $stmt->fetch()['id'];
-		header("Location: $sub_path/content/thread/$id");
+		header("Location: /$sub_path/content/thread/$id");
 	}
 	public function search() {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -250,7 +250,7 @@ class content_controller extends controller{
 		$post_id = (int)$post_id;
 		$thread_id = (int)$thread_id;
 		if(empty($thread_id) || empty($post_id)) {
-			header("Location: $sub_path/error/server_error");
+			header("Location: /$sub_path/error/server_error");
 			return "";
 		}
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
