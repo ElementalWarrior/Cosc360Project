@@ -40,7 +40,13 @@ function handle_error($errno, $errstr, $errfile, $errline) {
 		':trace' => $e->getTraceAsString()
 	));
 	if(stripos($_SERVER['SERVER_NAME'],'localhost') !== false) {
-		echo $e->getMessage();
+		if($errno == E_USER_ERROR)
+		{
+			http_response_code(500);
+			throw $e;
+		} else {
+			echo $e->getMessage();
+		}
 	}
 }
 set_error_handler('handle_error');
@@ -63,7 +69,48 @@ function error_page(&$action, &$controller) {
 	$controller = 'error';
 }
 
+function construct_user() {
+	global $user;
+	$user = array(
+		'account_id' => $_SESSION['account_id'],
+		'username' => $_SESSION['username'],
+		'admin' => $_SESSION['admin']
+	);
+}
+$user = null;
+if(!empty($_SESSION['account_id'])) {
+	construct_user();
+}
+
 $routing_info = check_route($path);
+
+$handler = '';
+switch($routing_info['code']) {
+	case 0:
+	case 1:
+	 	$handler = 'controllers';
+		break;
+	case 2:
+		$handler = 'static';
+}
+
+$path_noquery = $path;
+$query = null;
+if(strpos($path, '?') !== false) {
+	$path_noquery = substr($path_noquery, 0, strpos($path_noquery, '?'));
+	$query = substr($path, strpos($path,'?'));
+}
+$dbh = controller::create_db_connection();
+$stmt = $dbh->prepare('INSERT into request_log (user_ip, account_id, username, handler, request_uri, request_query, request_type) select :ip, :account_id, :username, :handler, :uri, :query, :type');
+$stmt->execute(array(
+	':ip' => $_SERVER['REMOTE_ADDR'],
+	':account_id' => empty($user['account_id']) ? null : $user['account_id'],
+	':username' => empty($user['username']) ? null : $user['username'],
+	':handler' => $handler,
+	':uri' => $path_noquery,
+	':query' => $query,
+	':type' => $_SERVER['REQUEST_METHOD']
+));
 switch($routing_info['code']) {
 
 	//404
@@ -92,47 +139,13 @@ switch($routing_info['code']) {
 		}
 		break;
 }
-$user = null;
-if(!empty($_SESSION['account_id'])) {
-	$user = array(
-		'account_id' => $_SESSION['account_id'],
-		'username' => $_SESSION['username'],
-		'admin' => $_SESSION['admin']
-	);
-}
 $page_body = '';
 function render_body(){
 	global $page_body;
 	echo $page_body;
 }
 if($routing_info['code'] != 2) {
-	app_include_once("/controllers/$controller" . '_controller.php');
-	$class = $controller . "_controller";
-	try {
-		$controller_object = new $class();
-		$action_result = call_user_func_array(array($controller_object, $action), $params);
-	} catch (Exception $e) {
-		$dbh = controller::create_db_connection();
-		$stmt = $dbh->prepare('INSERT into error_log(message, stack_trace) select :msg, :trace');
-		$stmt->execute(array(
-			':msg' => $e->getMessage(),
-			':trace' => $e->getTraceAsString()
-		));
-		if(stripos($_SERVER['SERVER_NAME'],'localhost') !== false) {
-			throw $e;
-		}
-	}
-	ob_start();
-		if(is_array($action_result)) {
-			$view_data = $action_result['view_data'];
-			Html::render_view($action_result['action'], $action_result['controller']);
-		} else if(is_string($action_result) || is_numeric($action_result)) {
-			echo $action_result;
-		} else if(is_bool($action_result)){
-			echo $action_result ? 'true' : 'false';
-		}
-	$page_body = ob_get_clean();
-	ob_end_flush();
+	$page_body = Html::render_action($action, $controller, $params);
 	// print_r($_SERVER);
 	Html::render_view('layout');
 	// include('/views/shared/layout.php');

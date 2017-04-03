@@ -1,7 +1,7 @@
 <?php
-	define('DB_URL', 'us-cdbr-iron-east-03.cleardb.net');
+	define('DB_URL', 'localhost');
 	define('DB_PORT', 3306);
-	define('DB_NAME', 'heroku_6e1b4356035a228');
-	define('DB_USER', 'b972976a2c5de7');
-	define('DB_PASS', '1b05b707');
+	define('DB_NAME', 'db_82815101');
+	define('DB_USER', '82815101');
+	define('DB_PASS', '82815101');
  ?>

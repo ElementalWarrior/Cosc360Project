@@ -1,5 +1,5 @@
 <?php
-global $view_data;
+
 global $user;
 $allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_id'] || $user['admin']);
  ?>

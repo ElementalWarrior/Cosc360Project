@@ -2,6 +2,7 @@
 require_once('controller.php');
 class content_controller extends controller{
 	public function index() {
+		$this->log_activity("view");
 		$dbh = $this->create_db_connection();
 		$threads = array();
 		foreach($dbh->query('SELECT thread_id, thread_name, username, num_posts, a.account_id from threads t join accounts a on a.account_id = t.account_id where date_deleted is null order by date_updated desc') as $row) {
@@ -10,11 +11,12 @@ class content_controller extends controller{
 		return $this->render_action('index', 'content', $threads);
 	}
 	public function thread($thread_id) {
+		$this->log_activity("view", $thread_id);
 		$thread_id = (int)$thread_id;
 		$dbh = $this->create_db_connection();
 
 		//get thread info
-		$stmt = $dbh->prepare('SELECT thread_id, thread_name, thread_body, username, image, content_type, num_posts, a.account_id from threads t join accounts a on a.account_id = t.account_id where thread_id = :thread_id');
+		$stmt = $dbh->prepare('SELECT thread_id, thread_name, thread_body, username, image, content_type, num_posts, a.account_id, t.date_created from threads t join accounts a on a.account_id = t.account_id where thread_id = :thread_id');
 		$stmt->execute(array(':thread_id' => $thread_id));
 		$thread = $stmt->fetch();
 
@@ -50,6 +52,7 @@ class content_controller extends controller{
 		$stmt = $dbh->prepare('UPDATE threads set num_posts = num_posts+1, date_updated = current_timestamp() where thread_id = :thread_id and date_deleted is null');
 		$stmt->execute(array(':thread_id' => $thread_id));
 		$dbh->commit();
+		$this->log_activity("post_submit", $thread_id);
 		header("Location: $sub_path/content/thread/$thread_id");
 	}
 	public function new_thread() {
@@ -57,6 +60,7 @@ class content_controller extends controller{
 			return $this->post_new_thread();
 		}
 
+		$this->log_activity("view");
 		return $this->render_action('new_thread', 'content');
 	}
 
@@ -80,12 +84,14 @@ class content_controller extends controller{
 		$stmt = $dbh->prepare('SELECT LAST_INSERT_ID() as id');
 		$stmt->execute();
 		$id = $stmt->fetch()['id'];
+		$this->log_activity("thread_submit", $id);
 		header("Location: $sub_path/content/thread/$id");
 	}
 	public function search() {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
 			return $this->post_search();
 		}
+		$this->log_activity("view");
 		return $this->render_action('search', 'content');
 	}
 	private function post_search() {
@@ -139,6 +145,7 @@ class content_controller extends controller{
 			$stmt->execute(array(':post' => '%' . $search_post . '%'));
 			$view_data['content_results'] = $stmt->fetchAll();
 		}
+		$this->log_activity("search");
 		return $this->render_action('search', 'content', $view_data);
 	}
 	public static function strip_sql_specials($string) {
@@ -156,14 +163,20 @@ class content_controller extends controller{
 		$dbh = $this->create_db_connection();
 		$stmt = $dbh->prepare('
 			select * from (
-			    select t.thread_id, thread_name, count(*) cnt from posts p join threads t on t.thread_id = p.thread_id where p.date_created > DATE_SUB(NOW(), INTERVAL 30*10000 MINUTE)
-			    group by thread_id, thread_name
+			    select t.thread_id, thread_name, count(*) as hour_count, num_posts, date_updated
+				from posts p join threads t on t.thread_id = p.thread_id
+				where p.date_created > DATE_SUB(NOW(), INTERVAL 30*10000 MINUTE)
+				and t.date_deleted is null
+				and p.date_deleted is null
+			    group by thread_id, thread_name, date_updated
 			    union ALL
-			    (select thread_id, thread_name, 0 from threads order by date_updated)) agg
-			group by thread_id, thread_name');
+			    (select thread_id, thread_name, 0 as hour_count, num_posts, date_updated from threads where num_posts > 0 and date_deleted is null)) agg
+			group by thread_id, thread_name, num_posts
+			order by hour_count desc, date_updated desc
+			limit 10');
 		$stmt->execute();
 		$results = $stmt->fetchAll();
-		return $this->render_action('hot_threads', 'content');
+		return $this->render_action('hot_threads', 'content', $results);
 	}
 
 	public function remove_thread($thread_id) {
@@ -180,21 +193,32 @@ class content_controller extends controller{
 		$stmt->execute(array(
 			':thread_id' => $thread_id
 		));
+		$this->log_activity("thread_remove", $thread_id, null, true);
 	}
-	public function remove_post($post_id) {
+	public function remove_post($thread_id, $post_id) {
 		global $user;
 		if(!is_array($user) || !$user['admin']) {
 			header('HTTP/1.0 403 Forbidden', true, 403);
 			return "";
 		}
 		$post_id = (int)$post_id;
+		$thread_id = (int)$thread_id;
 
 		$dbh = $this->create_db_connection();
+		$dbh->beginTransaction();
 		$stmt = $dbh->prepare('
-			UPDATE posts set date_deleted = now() where post_id = :post_id');
+			UPDATE posts set date_deleted = now() where post_id = :post_id and thread_id = :thread_id');
 		$stmt->execute(array(
-			':post_id' => $post_id
+			':post_id' => $post_id,
+			':thread_id' => $thread_id
 		));
+		$stmt = $dbh->prepare('
+			UPDATE threads set num_posts = num_posts - 1 where thread_id = :thread_id');
+		$stmt->execute(array(
+			':thread_id' => $thread_id
+		));
+		$dbh->commit();
+		$this->log_activity("post_remove", $thread_id, $post_id, true);
 	}
 	public function edit_thread($thread_id) {
 		global $user;
@@ -213,6 +237,7 @@ class content_controller extends controller{
 		));
 		$view_data = $stmt->fetch();
 
+		$this->log_activity("view", $thread_id, null, true);
 		return $this->render_action('edit_thread', 'content', $view_data);
 	}
 
@@ -239,6 +264,7 @@ class content_controller extends controller{
 			':thread_body' => $thread_body,
 			':thread_id' => $thread_id
 		));
+		$this->log_activity("post_edit", $thread_id, null, true);
 		return $this->render_action('edit_thread', 'content', $view_data);
 	}
 	public function edit_post($thread_id, $post_id) {
@@ -266,6 +292,7 @@ class content_controller extends controller{
 			':post_id' => $post_id
 		));
 		$view_data = $stmt->fetch();
+		$this->log_activity("view", $thread_id, $post_id, true);
 
 		return $this->render_action('edit_post', 'content', $view_data);
 	}
@@ -296,6 +323,28 @@ class content_controller extends controller{
 			':post_id' => $post_id,
 			':thread_id' => $thread_id
 		));
+		$this->log_activity("post_edit", $thread_id, $post_id, true);
 		return $this->render_action('edit_post', 'content', $view_data);
+	}
+	public function activity_by_date($date, $account_id = null) {
+		if($account_id != null) {
+			$account_id = (int)$account_id;
+		}
+		$this->log_activity("view");
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare(
+			'SELECT al.*, thread_name from activity_log al
+			left join threads t on t.thread_id = al.thread_id
+			where (admin_action = 0 or admin_action = :admin)
+			and al.date_created >= :date and al.date_created < date_add(:date, interval 1 day)
+			and (:account_id is null or al.account_id = :account_id)
+			order by al.date_created desc');
+		$stmt->execute(array(
+			':admin' => empty($user['admin']) ? false : empty($user['admin']),
+			':date' => $date,
+			':account_id' => $account_id
+		));
+		$results = $stmt->fetchAll();
+		return $this->render_action('activity_by_date', 'content', $results);
 	}
 }

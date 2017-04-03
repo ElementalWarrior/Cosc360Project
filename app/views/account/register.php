@@ -1,5 +1,5 @@
 <?php
-	global $view_data;
+
  ?>
 <section id="register" class="single-centered">
 	<form class="" id="frm-register" action="<?php global $sub_path; echo $sub_path; ?>/account/register" method="post" enctype="multipart/form-data">
@@ -8,7 +8,7 @@
 				echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";
 			}?>
 		<div class="">
-			<input type="text" name="username" value="" placeholder="Username" required>
+			<input type="text" name="username" value="<?php echo empty($view_data['username']) ? '' : $view_data['username']; ?>" placeholder="Username" required>
 		</div>
 		<div class="">
 			<input type="password" name="password" id="password" value="" placeholder="Password" required>
@@ -17,7 +17,7 @@
 			<input type="password" name="password-check" id="password-check" value="" placeholder="Confirm Password" required>
 		</div>
 		<div class="">
-			<input type="email" name="email" value="" placeholder="Email" required>
+			<input type="email" name="email" value="<?php echo empty($view_data['email']) ? '' : $view_data['email']; ?>" placeholder="Email" required>
 		</div>
 		<div id="image-upload">
 			<div class="">

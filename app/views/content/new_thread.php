@@ -1,7 +1,7 @@
 
 <?php
 	global $user;
-	global $view_data;
+
 	Html::render_view('sidebar');
  ?>
 

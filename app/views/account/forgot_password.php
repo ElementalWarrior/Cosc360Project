@@ -1,5 +1,5 @@
 <?php
-	global $view_data;
+
  ?>
 <section id="forgot_password" class="single-centered">
 	<form class="" action="<?php global $sub_path; echo $sub_path; ?>/account/forgot_password" method="post">

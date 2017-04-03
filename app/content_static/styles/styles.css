@@ -7,8 +7,18 @@ a,
 	cursor: pointer;
 	text-decoration: none;
 }
+a.a-alt {
+	color: #aaa;
+}
 a:hover {
 	color: #FFA552;
+}
+.list-unstyled {
+	list-style: none inside;
+	padding: 0;
+}
+.list-striped li:nth-child(2n) {
+	background: rgba(0,0,0,0.025);
 }
 
 /* default BA5624 */
@@ -30,8 +40,22 @@ p {
 .text-right {
 	text-align: right;
 }
+.text-left {
+	text-align: left;
+}
 .underline {
 	text-decoration: underline;
+}
+table {
+	border-spacing: 0;
+}
+.table-padded td,
+.table-padded th {
+	padding: 0.25rem 0.5rem;
+}
+.table-striped tr:nth-child(2n)
+ {
+	background: rgba(0,0,0,0.05);
 }
 .btn {
 	background: #fff;
@@ -272,6 +296,9 @@ main > * {
 #btnEditThread {
 	margin-bottom: 1rem;
 }
+.thread-content {
+	position: relative;
+}
 .thread-content > h3 {
 	background: #fff7e4;
 	border: 4px solid #FFA552;
@@ -304,7 +331,7 @@ main > * {
 	height: 40px;
 	width: 40px;
 }
-.post .date-posted {
+.date-posted {
 	color: #aaa;
 	font-size: 0.8rem;
 	position: absolute;
@@ -516,4 +543,21 @@ main > * {
 	margin-bottom: 1rem;
 	margin-left: auto;
 	margin-right: auto;
+}
+.hot-thread .comments::before {
+	content: '';
+	clear: both;
+	display: block;
+}
+#hot_threads li {
+	padding: 0.25rem 0.5rem;
+}
+#table-activity,
+#table-activity td {
+	border: 1px solid #f1d9d9;
+	border-collapse: collapse;
+}
+#table-activity thead th {
+	background: rgba(0,0,0,0.025);
+	border-bottom: 2px solid #f1d9d9;
 }

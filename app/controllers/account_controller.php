@@ -5,6 +5,7 @@ class account_controller extends controller {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
 			return $this->post_login();
 		}
+		$this->log_activity("view");
 		return $this->render_action('login', 'account');
 	}
 	private function post_login() {
@@ -21,14 +22,17 @@ class account_controller extends controller {
 			$_SESSION['username'] = $results['username'];
 			$_SESSION['account_id'] = $results['account_id'];
 			$_SESSION['admin'] = $results['admin'];
+			construct_user();
 			global $sub_path;
 			header("Location: $sub_path/");
+			$this->log_activity("login");
 		} else {
 			$view_data['error'] = 'There was a problem logging in.';
 		}
 		return $this->render_action('login', 'account', $view_data);
 	}
 	public function logout() {
+		$this->log_activity("logout");
 		session_unset();
 		global $sub_path;
 		header("Location: $sub_path/");
@@ -37,6 +41,7 @@ class account_controller extends controller {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
 			return $this->post_register();
 		}
+		$this->log_activity("view");
 
 		return $this->render_action('register', 'account');
 	}
@@ -79,6 +84,15 @@ class account_controller extends controller {
 		}
 
 		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare('select * from accounts where username = :username or email = :email');
+		$stmt->execute(array(
+			':username' => $username,
+			':email' => $email
+		));
+		$results = $stmt->fetchAll();
+		if(count($results) > 0) {
+			return $this->render_action('register', 'account', array('error' => 'An account using this username or email address already exists.', 'username' => $username, 'email' => $email));
+		}
 		$stmt = $dbh->prepare('INSERT into accounts(username, email, password, image, content_type) select :username, :email, :password, :image, :contenttype');
 		$stmt->bindParam(':username', $username);
 		$stmt->bindParam(':password', $password);
@@ -89,11 +103,13 @@ class account_controller extends controller {
 
 		//login
 		$this->post_login();
+		$this->log_activity("register");
 
 	}
 
 	public function profile($account_id = null) {
 		global $user;
+		$this->log_activity("view");
 		if(empty($account_id)){
 			if(!is_array($user)) {
 				global $sub_path;
@@ -131,6 +147,7 @@ class account_controller extends controller {
 		if($account_id != $user['account_id'] && !$user['admin']) {
 			return "";
 		}
+		$this->log_activity("profile_update");
 		$email = $_POST['email'];
 
 		$dbh = $this->create_db_connection();
@@ -212,6 +229,7 @@ class account_controller extends controller {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
 			return $this->post_forgot_password();
 		}
+		$this->log_activity("view");
 		return $this->render_action('forgot_password', 'account');
 	}
 	private function post_forgot_password() {
@@ -234,10 +252,12 @@ class account_controller extends controller {
 		));
 		$results = $stmt->fetchAll();
 		if(count($results) == 0) {
+			$this->log_activity("forgot_password_invalid");
 			$view_data['error'] = 'There was no account attached with this email address.';
 			$ok = false;
 		}
 		if($ok) {
+			$this->log_activity("forgot_password");
 			$token = $this->getToken();
 			$stmt = $dbh->prepare('UPDATE accounts set  recovery = :token, date_recovery = now() where email = :email');
 			$stmt->execute(array(
@@ -301,6 +321,7 @@ class account_controller extends controller {
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
 			return $this->post_recover_password($token);
 		}
+		$this->log_activity("view");
 		return $this->render_action('recover_password', 'account', array('token' => $token));
 	}
 
@@ -320,6 +341,7 @@ class account_controller extends controller {
 			$ok = false;
 		}
 		if($ok){
+			$this->log_activity("recover_password");
 			$dbh = $this->create_db_connection();
 			$stmt = $dbh->prepare('UPDATE accounts set password = :password where recovery = :token');
 			$stmt->execute(array(
@@ -339,6 +361,7 @@ class account_controller extends controller {
 			header('HTTP/1.0 403 Forbidden', true, 403);
 			return "";
 		}
+		$this->log_activity("account_status", null, null, true);
 		$account_id = (int)$account_id;
 		$value = (bool)$value;
 		$dbh = $this->create_db_connection();

@@ -1,5 +1,5 @@
 <?php
-global $view_data;
+
 global $sub_path;
 Html::render_view('sidebar');
 ?>
@@ -31,7 +31,7 @@ Html::render_view('sidebar');
 	</div>
 	<?php
 	function render_user($user, $hide_email = false, $hide_image = false, $include_by = false) {
-		global $view_data;
+
 		global $sub_path;
 		echo '<div class="user">';
 		if(!$hide_image) {

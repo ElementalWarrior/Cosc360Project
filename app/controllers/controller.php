@@ -1,8 +1,12 @@
 <?php
 
 class controller {
-	protected function render_action($action, $controller, $view_data = null) {
-		return array('action' => $action, 'controller' => $controller, 'view_data' => $view_data);
+	public function render_action($action, $controller, $view_data = null) {
+		ob_start();
+		Html::render_view($action, $controller, $view_data);
+		$page_body = ob_get_contents();
+		ob_end_clean();
+		return $page_body;
 	}
 	public static function create_db_connection() {
 		$host = DB_URL;
@@ -15,6 +19,31 @@ class controller {
 		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$dbh->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 		return $dbh;
+	}
+	protected function log_activity($action, $thread_id = null, $post_id = null, $admin_action = null) {
+		global $user;
+		global $path;
+		if($thread_id != null) {
+			$thread_id = (int)$thread_id;
+		}
+		if($post_id != null) {
+			$post_id = (int)$post_id;
+		}
+		if($admin_action != null) {
+			$admin_action = (bool)$admin_action;
+		}
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare('INSERT into activity_log(ip, account_id, username, action, request_uri, thread_id, post_id, admin_action) select :ip, :account_id, :username, :action, :uri, :thread_id, :post_id, :admin_action');
+		$stmt->execute(array(
+			':ip' => $_SERVER['REMOTE_ADDR'],
+			':account_id' => empty($user['account_id']) ? null : $user['account_id'],
+			':username' => empty($user['username']) ? null : $user['username'],
+			':action' => $action,
+			':uri' => $path,
+			':thread_id' => $thread_id,
+			':post_id' => $post_id,
+			':admin_action' => $admin_action
+		));
 	}
 }
  ?>

@@ -1,5 +1,5 @@
 <?php
-global $view_data;
+
  ?>
 <section id="recover_password">
 	<form class="" action="<?php global $sub_path; echo $sub_path; ?>/account/recover_password/<?php echo $view_data['token']; ?>" method="post">

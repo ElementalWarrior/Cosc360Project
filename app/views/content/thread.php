@@ -1,6 +1,6 @@
 <?php
 	global $user;
-	global $view_data;
+
 	$thread = $view_data['thread'];
 	$posts = $view_data['posts'];
  ?>
@@ -18,6 +18,7 @@
 			<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $thread['account_id']; ?>" class="author"><?php echo Html::special_chars($thread['username']); ?></a>
 		</h3>
 		<p><?php echo Html::special_chars($thread['thread_body']); ?></p>
+		<a href="<?php echo $sub_path; ?>/content/activity_by_date/<?php echo (new DateTime($thread['date_created']))->format('Y-m-d'); ?>" class="date-posted"><?php echo $thread['date_created']; ?></a>
 	</section>
 	<section id="posts">
 		<?php foreach($posts as $post) { ?>
@@ -28,9 +29,9 @@
 			<p><?php echo Html::special_chars($post['post_body']); ?></p>
 			<?php if($user['admin']) { ?>
 				<a href="<?php global $sub_path; echo $sub_path; ?>/content/edit_post/<?php echo $thread['thread_id']; ?>/<?php echo $post['post_id']; ?>" class="btn-alt btn-small btnEditPost">Edit Post</a>
-				<button type="button" name="button" class="btn-alt btn-small btnRemovePost" data-post-id="<?php echo $post['post_id']; ?>">Remove Thread</button>
+				<button type="button" name="button" class="btn-alt btn-small btnRemovePost" data-thread-id="<?php echo $thread['thread_id']; ?>" data-post-id="<?php echo $post['post_id']; ?>">Remove Thread</button>
 			<?php } ?>
-			<div class="date-posted"><?php echo $post['date_created']; ?></div>
+			<a href="<?php echo $sub_path; ?>/content/activity_by_date/<?php echo (new DateTime($post['date_created']))->format('Y-m-d'); ?>" class="date-posted"><?php echo $post['date_created']; ?></a>
 		</div>
 		<?php } ?>
 	</section>
@@ -64,8 +65,9 @@
 	$(document).ready(function() {
 		$('.btnRemovePost').on('click', function(e) {
 			var post_id = $(e.target).attr('data-post-id');
+			var thread_id = $(e.target).attr('data-thread-id');
 			$('[data-post-id=' + post_id + ']').closest('.post').remove();
-			$.ajax({url: '/content/remove_post/' + post_id}).fail(function() {
+			$.ajax({url: '/content/remove_post/' + thread_id + '/' + post_id}).fail(function() {
 				alert('There was a problem removing the post');
 			});
 		});

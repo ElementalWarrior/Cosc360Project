@@ -1,8 +1,9 @@
 <?php
 	global $user;
-	global $view_data;
 ?>
-<?php Html::render_view("sidebar") ?>
+<section id="sidebar">
+	<?php echo Html::render_action("hot_threads", "content") ?>
+</section>
 <section id="posts">
 <!-- <div id="post-header" class="clearfix">
 	<div class="post-right">
