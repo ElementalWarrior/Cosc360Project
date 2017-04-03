@@ -73,3 +73,46 @@
 		});
 	})
 </script>
+
+
+<script type="text/javascript">
+	var sub_path = '<?php echo $sub_path; ?>';
+	var date_last_updated = new Date('<?php echo (new DateTime())->format('Y-m-d H:i:s'); ?>');
+	console.log(date_last_updated);
+	window.setInterval(function() {
+		$.ajax({url: '<?php echo $sub_path;?>/content/check_posts/' + moment(date_last_updated).format('YYYY-MM-DD HH:mm:ss'), success: function(data) {
+			
+			data = JSON.parse(data);
+			for(var i = 0; i < data.length; i++) {
+				var thread = data[i];
+				var thread_id = thread.thread_id;
+				var article = $('.post:nth-child(1)').clone();
+				article.hide();
+				article.find('[data-thread-id]').each(function() { $(this).attr('data-thread-id', thread_id); });
+				article.find('[data-post-id]').each(function() { $(this).attr('data-post-id', post_id); });
+				article.find('p').html(thread.post_body);
+				article.find('.replies').html(thread.num_posts);
+				// article.find('.date-posted').html(thread.num_posts);
+				article.find('.thread-link').prop('href', sub_path + '/content/thread/' + thread_id).html(thread.thread_name);
+				article.find('.account-link').prop('href', sub_path + '/account/profile/' + thread.account_id);
+				$('#thread_articles').prepend(article);
+			}
+			if(data.length > 0) {
+				window.date_last_updated = new Date();
+			}
+		}
+		})
+	}, 1000);
+</script>
+
+		<div class="post">
+			<img src="data:image/<?php echo $post['content_type'] . ';base64,' . base64_encode($post['image']);?>" alt="">
+			<div class="response-by">Response By:</div>
+			<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $post['account_id']; ?>" class="account-link author"><?php echo $post['username']; ?></a>
+			<p><?php echo Html::special_chars($post['post_body']); ?></p>
+			<?php if($user['admin']) { ?>
+				<a href="<?php global $sub_path; echo $sub_path; ?>/content/edit_post/<?php echo $thread['thread_id']; ?>/<?php echo $post['post_id']; ?>" class="btn-alt btn-small btnEditPost">Edit Post</a>
+				<button type="button" name="button" class="btn-alt btn-small btnRemovePost" data-thread-id="<?php echo $thread['thread_id']; ?>" data-post-id="<?php echo $post['post_id']; ?>">Remove Thread</button>
+			<?php } ?>
+			<a href="<?php echo $sub_path; ?>/content/activity_by_date/<?php echo (new DateTime($post['date_created']))->format('Y-m-d'); ?>" class="date-posted"><?php echo $post['date_created']; ?></a>
+		</div>

@@ -406,7 +406,7 @@ class content_controller extends controller{
 		));
 	}
 	public function check_thread($date_last_updated) {
-		// return $date_last_updated;
+		
 		$date_last_updated = (new DateTime(urldecode($date_last_updated)))->format('Y-m-d H:i:s');
 		$dbh = $this->create_db_connection();
 		
@@ -416,9 +416,20 @@ class content_controller extends controller{
 		));
 		$results = $stmt->fetchAll();
 		
-		// echo $date_last_updated;
-		// print_r($results);
-		// die();
+		$ret = array('result' => json_encode($results), 'include_layout' => 0);
+		return $ret;
+	}
+	public function check_posts($date_last_updated, $thread_id) {
+		
+		$date_last_updated = (new DateTime(urldecode($date_last_updated)))->format('Y-m-d H:i:s');
+		$dbh = $this->create_db_connection();
+		
+		$stmt = $dbh->prepare('SELECT *, username from posts join (select account_id, username from accounts) a on a.account_id = posts.account_id where date_created > :date_last_updated and date_deleted is null order by date_updated');
+		$stmt->execute(array(
+			':date_last_updated' => $date_last_updated
+		));
+		$results = $stmt->fetchAll();
+		
 		$ret = array('result' => json_encode($results), 'include_layout' => 0);
 		return $ret;
 	}
