@@ -14,18 +14,23 @@
 <?php if(count($view_data) == 0) { ?>
 	<h2>There are no threads to show, why don't you create one?</h2>
 <?php } ?>
-<?php foreach($view_data as $row) { ?>
-	<article>
-		<div class="thread-right">
-			<span class="replies"><?php echo $row['num_posts']; ?></span>
-			<?php if($user['admin']) { ?>
-				<button type="button" name="button" class="btn-alt btn-small btnRemoveThread" data-thread-id="<?php echo $row['thread_id']; ?>">Remove Thread</button>
-			<?php } ?>
-		</div>
-		<h3><a href="<?php echo $sub_path; ?>/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
-		<a href="<?php echo $sub_path; ?>/account/profile/<?php echo $row['account_id']; ?>" class="author"><?php echo $row['username']; ?></a>
-	</article>
-<?php } ?>
+<div id="new_threads_to_show">
+	<a href="javascript:ShowNewThreads();">Click here to show the new discussions!</a>
+</div>
+<div id="thread_articles">
+	<?php foreach($view_data as $row) { ?>
+		<article class="index-thread" data-thread-id="<?php echo $row['thread_id']; ?>">
+			<div class="thread-right">
+				<span class="replies"><?php echo $row['num_posts']; ?></span>
+				<?php if($user['admin']) { ?>
+					<button type="button" name="button" class="btn-alt btn-small btnRemoveThread" data-thread-id="<?php echo $row['thread_id']; ?>">Remove Thread</button>
+				<?php } ?>
+			</div>
+			<h3><a class="thread-link" href="<?php echo $sub_path; ?>/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
+			<a class="account-link" href="<?php echo $sub_path; ?>/account/profile/<?php echo $row['account_id']; ?>" class="author"><?php echo $row['username']; ?></a>
+		</article>
+	<?php } ?>
+</div>
 	<?php if(is_array($user)) { ?>
 	<div class="text-right">
 		<a href="<?php echo $sub_path; ?>/content/new_thread/" class="btn">New Thread</a>
@@ -46,11 +51,34 @@
 </script>
 
 <script type="text/javascript">
-	var date_last_updated = new Date('<?php echo (new DateTime())->format('Y-m-d h:i:s'); ?>');
+	var sub_path = '<?php echo $sub_path; ?>';
+	var date_last_updated = new Date('<?php echo (new DateTime())->format('Y-m-d H:i:s'); ?>');
+	console.log(date_last_updated);
 	window.setInterval(function() {
 		$.ajax({url: '<?php echo $sub_path;?>/content/check_thread/' + moment(date_last_updated).format('YYYY-MM-DD HH:mm:ss'), success: function(data) {
-				console.log(data);
+			
+			data = JSON.parse(data);
+			for(var i = 0; i < data.length; i++) {
+				var thread = data[i];
+				var thread_id = thread.thread_id;
+				var article = $('.index-thread:nth-child(1)').clone();
+				article.hide();
+				article.find('[data-thread-id]').each(function() { $(this).attr('data-thread-id', thread_id); });
+				article.find('.replies').html(thread.num_posts);
+				article.find('.thread-link').prop('href', sub_path + '/content/thread/' + thread_id).html(thread.thread_name);
+				article.find('.account-link').prop('href', sub_path + '/account/profile/' + thread.account_id);
+				$('#thread_articles').prepend(article);
 			}
+			if(data.length > 0) {
+				$('#new_threads_to_show').show();
+			window.date_last_updated = new Date();
+			}
+		}
 		})
 	}, 1000);
+	
+	function ShowNewThreads() {
+		$('#new_threads_to_show').hide();
+		$('#thread_articles article').show();
+	}
 </script>

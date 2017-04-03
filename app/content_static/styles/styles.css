@@ -252,6 +252,13 @@ main > * {
 	display: inline-block;
 	margin-top: 4px;
 }
+#new_threads_to_show{ 
+    background: #ffffbd;
+    border: 1px solid #cccc88;
+	display: none;
+    margin-bottom: 0.5rem;
+	padding: 0.5rem;
+}
 /************************ single column centered  *************************/
 /*.single-centered form{
 	float: left;

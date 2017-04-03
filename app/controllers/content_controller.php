@@ -410,11 +410,15 @@ class content_controller extends controller{
 		$date_last_updated = (new DateTime(urldecode($date_last_updated)))->format('Y-m-d H:i:s');
 		$dbh = $this->create_db_connection();
 		
-		$stmt = $dbh->prepare('SELECT * from threads where date_created > :date_last_updated and date_deleted is null');
+		$stmt = $dbh->prepare('SELECT *, username from threads join (select account_id, username from accounts) a on a.account_id = threads.account_id where date_created > :date_last_updated and date_deleted is null order by date_updated');
 		$stmt->execute(array(
 			':date_last_updated' => $date_last_updated
 		));
 		$results = $stmt->fetchAll();
+		
+		// echo $date_last_updated;
+		// print_r($results);
+		// die();
 		$ret = array('result' => json_encode($results), 'include_layout' => 0);
 		return $ret;
 	}
