@@ -27,7 +27,7 @@
 				<?php } ?>
 			</div>
 			<h3><a class="thread-link" href="<?php echo $sub_path; ?>/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
-			<a class="account-link" href="<?php echo $sub_path; ?>/account/profile/<?php echo $row['account_id']; ?>" class="author"><?php echo $row['username']; ?></a>
+			<a href="<?php echo $sub_path; ?>/account/profile/<?php echo $row['account_id']; ?>" class="author account-link"><?php echo $row['username']; ?></a>
 		</article>
 	<?php } ?>
 </div>
@@ -56,7 +56,7 @@
 	console.log(date_last_updated);
 	window.setInterval(function() {
 		$.ajax({url: '<?php echo $sub_path;?>/content/check_thread/' + moment(date_last_updated).format('YYYY-MM-DD HH:mm:ss'), success: function(data) {
-			
+
 			data = JSON.parse(data);
 			for(var i = 0; i < data.length; i++) {
 				var thread = data[i];
@@ -75,8 +75,8 @@
 			}
 		}
 		})
-	}, 1000);
-	
+	}, 10000);
+
 	function ShowNewThreads() {
 		$('#new_threads_to_show').hide();
 		$('#thread_articles article').show();

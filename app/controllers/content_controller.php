@@ -28,6 +28,7 @@ class content_controller extends controller{
 	}
 	public function reply($thread_id) {
 		global $user;
+		global $sub_path;
 		echo $thread_id;
 		if($_SERVER['REQUEST_METHOD'] !== 'POST') {
 			global $sub_path;
@@ -406,31 +407,36 @@ class content_controller extends controller{
 		));
 	}
 	public function check_thread($date_last_updated) {
-		
+
 		$date_last_updated = (new DateTime(urldecode($date_last_updated)))->format('Y-m-d H:i:s');
 		$dbh = $this->create_db_connection();
-		
+
 		$stmt = $dbh->prepare('SELECT *, username from threads join (select account_id, username from accounts) a on a.account_id = threads.account_id where date_created > :date_last_updated and date_deleted is null order by date_updated');
 		$stmt->execute(array(
 			':date_last_updated' => $date_last_updated
 		));
 		$results = $stmt->fetchAll();
-		
+
 		$ret = array('result' => json_encode($results), 'include_layout' => 0);
 		return $ret;
 	}
 	public function check_posts($date_last_updated, $thread_id) {
-		
+
 		$date_last_updated = (new DateTime(urldecode($date_last_updated)))->format('Y-m-d H:i:s');
 		$dbh = $this->create_db_connection();
-		
-		$stmt = $dbh->prepare('SELECT *, username from posts join (select account_id, username from accounts) a on a.account_id = posts.account_id where date_created > :date_last_updated and date_deleted is null order by date_updated');
+
+		$stmt = $dbh->prepare('SELECT *, username, image, content_type from posts join (select account_id, username, image, content_type from accounts) a on a.account_id = posts.account_id where date_created > :date_last_updated and date_deleted is null order by date_created');
 		$stmt->execute(array(
 			':date_last_updated' => $date_last_updated
 		));
 		$results = $stmt->fetchAll();
-		
+		for($i = 0; $i < count($results); $i++) {
+			$results[$i]['image'] = base64_encode($results[$i]['image']);
+		}
+		// print_r($results);
+
 		$ret = array('result' => json_encode($results), 'include_layout' => 0);
+		// print_r($ret);
 		return $ret;
 	}
 }
