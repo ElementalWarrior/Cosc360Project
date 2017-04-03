@@ -6,6 +6,8 @@
 		<link rel="stylesheet" href="<?php global $sub_path; echo $sub_path; ?>/content_static/styles/styles.css">
 		<title>Index</title>
 		<script src="<?php global $sub_path; echo $sub_path; ?>/content_static/scripts/jquery-3.2.0.min.js"></script>
+		
+		<script type="text/javascript" src="<?php echo "$sub_path/content_static/scripts/moment.min.js"; ?>"></script>
 		<script type="text/javascript">
 			function Breadcrumbs(crumbs) {
 				var html = "";

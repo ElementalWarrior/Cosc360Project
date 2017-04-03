@@ -1,5 +1,6 @@
 <?php
 	global $user;
+	 global $sub_path;
 ?>
 <section id="sidebar">
 	<?php echo Html::render_view("sidebar") ?>
@@ -21,13 +22,13 @@
 				<button type="button" name="button" class="btn-alt btn-small btnRemoveThread" data-thread-id="<?php echo $row['thread_id']; ?>">Remove Thread</button>
 			<?php } ?>
 		</div>
-		<h3><a href="<?php global $sub_path; echo $sub_path; ?>/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
-		<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $row['account_id']; ?>" class="author"><?php echo $row['username']; ?></a>
+		<h3><a href="<?php echo $sub_path; ?>/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
+		<a href="<?php echo $sub_path; ?>/account/profile/<?php echo $row['account_id']; ?>" class="author"><?php echo $row['username']; ?></a>
 	</article>
 <?php } ?>
 	<?php if(is_array($user)) { ?>
 	<div class="text-right">
-		<a href="<?php global $sub_path; echo $sub_path; ?>/content/new_thread/" class="btn">New Thread</a>
+		<a href="<?php echo $sub_path; ?>/content/new_thread/" class="btn">New Thread</a>
 	</div>
 	<?php } ?>
 </section>
@@ -42,4 +43,14 @@
 			});
 		});
 	})
+</script>
+
+<script type="text/javascript">
+	var date_last_updated = new Date('<?php echo (new DateTime())->format('Y-m-d h:i:s'); ?>');
+	window.setInterval(function() {
+		$.ajax({url: '<?php echo $sub_path;?>/content/check_thread/' + moment(date_last_updated).format('YYYY-MM-DD HH:mm:ss'), success: function(data) {
+				console.log(data);
+			}
+		})
+	}, 1000);
 </script>

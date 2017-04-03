@@ -375,11 +375,11 @@ class content_controller extends controller{
 
 			select 'members_today', count(*) from accounts where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') union all
 
-			select 'threads_today', count(*) from threads where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') union all
+			select 'threads_today', count(*) from threads where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') and date_deleted is null union all
 
-			select 'posts_today', count(*) from posts where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d')
+			select 'posts_today', count(*) from posts where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') and date_deleted is null union all
 
-
+			select 'threads_total', count(*) from threads where date_deleted is null
 			"
 		);
 		$stmt->execute();
@@ -404,5 +404,18 @@ class content_controller extends controller{
 			'stats' => $stats,
 			'daily_visitors' => $results
 		));
+	}
+	public function check_thread($date_last_updated) {
+		// return $date_last_updated;
+		$date_last_updated = (new DateTime(urldecode($date_last_updated)))->format('Y-m-d H:i:s');
+		$dbh = $this->create_db_connection();
+		
+		$stmt = $dbh->prepare('SELECT * from threads where date_created > :date_last_updated and date_deleted is null');
+		$stmt->execute(array(
+			':date_last_updated' => $date_last_updated
+		));
+		$results = $stmt->fetchAll();
+		$ret = array('result' => json_encode($results), 'include_layout' => 0);
+		return $ret;
 	}
 }

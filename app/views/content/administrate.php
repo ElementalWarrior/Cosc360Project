@@ -46,6 +46,10 @@ $daily_visitors = $view_data['daily_visitors']
 			<div class="flex">
 				<div class="flex-one flex">
 					<div class="stats">
+						<h2><?php echo (int)$stats['threads_total']; ?></h2>
+						<span>Threads Total</span>
+					</div>
+					<div class="stats">
 						<h2><?php echo (int)$stats['threads_today']; ?></h2>
 						<span>Threads Created Today</span>
 					</div>
@@ -140,10 +144,12 @@ $daily_visitors = $view_data['daily_visitors']
 		    ]
 		};
 		var date_comp = data.labels[data.labels.length-1].split('-');
-		date_comp[2]++;
+		date_comp[2] = parseInt(date_comp[2])+1;
+		console.log(date_comp);
 		if(date_comp[2].toString().length == 1) {
 			date_comp[2] = '0' + date_comp[2].toString();
 		}
+		console.log(max)
 		var max = date_comp.join('-')
 		var options = {
 			responsize: true,

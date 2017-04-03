@@ -34,10 +34,14 @@ class Html {
 				throw new Exception('An error occurred.');
 			}
 		}
+		$page_body = null;
 		if(is_string($action_result) || is_numeric($action_result)) {
 			$page_body = $action_result;
 		} else if(is_bool($action_result)){
 			$page_body =  $action_result ? 'true' : 'false';
+		}
+		if($page_body == null) {
+			return $action_result;
 		}
 		return $page_body;
 	}

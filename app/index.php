@@ -101,16 +101,16 @@ if(strpos($path, '?') !== false) {
 	$query = substr($path, strpos($path,'?'));
 }
 $dbh = controller::create_db_connection();
-$stmt = $dbh->prepare('INSERT into request_log (user_ip, account_id, username, handler, request_uri, request_query, request_type) select :ip, :account_id, :username, :handler, :uri, :query, :type');
-$stmt->execute(array(
-	':ip' => $_SERVER['REMOTE_ADDR'],
-	':account_id' => empty($user['account_id']) ? null : $user['account_id'],
-	':username' => empty($user['username']) ? null : $user['username'],
-	':handler' => $handler,
-	':uri' => $path_noquery,
-	':query' => $query,
-	':type' => $_SERVER['REQUEST_METHOD']
-));
+// $stmt = $dbh->prepare('INSERT into request_log (user_ip, account_id, username, handler, request_uri, request_query, request_type) select :ip, :account_id, :username, :handler, :uri, :query, :type');
+// $stmt->execute(array(
+	// ':ip' => $_SERVER['REMOTE_ADDR'],
+	// ':account_id' => empty($user['account_id']) ? null : $user['account_id'],
+	// ':username' => empty($user['username']) ? null : $user['username'],
+	// ':handler' => $handler,
+	// ':uri' => $path_noquery,
+	// ':query' => $query,
+	// ':type' => $_SERVER['REQUEST_METHOD']
+// ));
 switch($routing_info['code']) {
 
 	//404
@@ -145,8 +145,25 @@ function render_body(){
 	echo $page_body;
 }
 if($routing_info['code'] != 2) {
-	$page_body = Html::render_action($action, $controller, $params);
+	$include_layout = true;
+	$action_result = Html::render_action($action, $controller, $params);
+	if(!is_array($action_result)) {
+		$page_body = $action_result;
+	} else {
+		$page_body = $action_result['result'];
+		if(isset($action_result['include_layout'])) {
+			$include_layout = $action_result['include_layout'] == 1;
+		}
+		
+		if(!$include_layout){
+			echo $page_body;
+		}
+	}
 	// print_r($_SERVER);
-	Html::render_view('layout');
+	// echo $action_result;
+	// die();
+	if($include_layout) {
+		Html::render_view('layout');
+	}
 	// include('/views/shared/layout.php');
 }
