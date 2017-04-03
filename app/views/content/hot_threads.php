@@ -2,6 +2,7 @@
 <?php if(count($view_data)) { ?>
 <article id="hot_threads">
 	<h2>Hot Threads</h2>
+	<p>Check out what other members are talking about!</p>
 	<ul class="list-unstyled list-striped">
 		<?php foreach($view_data as $thread) { ?>
 			<li class="hot-thread">

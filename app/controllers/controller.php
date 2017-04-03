@@ -33,8 +33,9 @@ class controller {
 			$admin_action = (bool)$admin_action;
 		}
 		$dbh = $this->create_db_connection();
-		$stmt = $dbh->prepare('INSERT into activity_log(ip, account_id, username, action, request_uri, thread_id, post_id, admin_action) select :ip, :account_id, :username, :action, :uri, :thread_id, :post_id, :admin_action');
+		$stmt = $dbh->prepare('INSERT into activity_log(user_agent, ip, account_id, username, action, request_uri, thread_id, post_id, admin_action) select :user_agent, :ip, :account_id, :username, :action, :uri, :thread_id, :post_id, :admin_action');
 		$stmt->execute(array(
+			':user_agent' => Html::special_chars($_SERVER['HTTP_USER_AGENT']),
 			':ip' => $_SERVER['REMOTE_ADDR'],
 			':account_id' => empty($user['account_id']) ? null : $user['account_id'],
 			':username' => empty($user['username']) ? null : $user['username'],

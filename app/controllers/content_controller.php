@@ -326,9 +326,12 @@ class content_controller extends controller{
 		$this->log_activity("post_edit", $thread_id, $post_id, true);
 		return $this->render_action('edit_post', 'content', $view_data);
 	}
-	public function activity_by_date($date, $account_id = null) {
+	public function activity_by_date($date = null, $account_id = null) {
 		if($account_id != null) {
 			$account_id = (int)$account_id;
+		}
+		if(stripos($date, 'null') === 0) {
+			$date = null;
 		}
 		$this->log_activity("view");
 		$dbh = $this->create_db_connection();
@@ -336,7 +339,7 @@ class content_controller extends controller{
 			'SELECT al.*, thread_name from activity_log al
 			left join threads t on t.thread_id = al.thread_id
 			where (admin_action = 0 or admin_action = :admin)
-			and al.date_created >= :date and al.date_created < date_add(:date, interval 1 day)
+			and (:date is null or al.date_created >= :date and al.date_created < date_add(:date, interval 1 day))
 			and (:account_id is null or al.account_id = :account_id)
 			order by al.date_created desc');
 		$stmt->execute(array(
@@ -346,5 +349,60 @@ class content_controller extends controller{
 		));
 		$results = $stmt->fetchAll();
 		return $this->render_action('activity_by_date', 'content', $results);
+	}
+	public function administrate() {
+		global $user;
+		if(empty($user['admin']) || !$user['admin']) {
+			return $this->render_action('file_not_found', 'error');
+		}
+		$this->log_activity("view");
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare(
+			"SELECT 'visitors_today' as metric, count(*) as value from (select 1 from activity_log where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') group by ip, username, user_agent) individ_users union all
+
+			SELECT 'visitors_members_today' as metric, count(*) as value from (select 1 from activity_log where account_id is not null and date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') group by ip, username, user_agent) individ_users union all
+
+			SELECT  'visitors_daily_average' as metric, sum(visitors_day) / count(*) from (
+			    SELECT count(*) as visitors_day
+			    from (
+			        select 1 as value, date_format(date_created, '%Y-%m-%d') as day
+			        from activity_log group by ip, username, user_agent, date_format(date_created, '%Y-%m-%d')
+			    ) individ_users
+			    group by day
+			) agg union all
+
+			select 'members', count(*) from accounts union all
+
+			select 'members_today', count(*) from accounts where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') union all
+
+			select 'threads_today', count(*) from threads where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') union all
+
+			select 'posts_today', count(*) from posts where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d')
+
+
+			"
+		);
+		$stmt->execute();
+		$results = $stmt->fetchAll();
+
+		$stats = array();
+
+		foreach($results as $row) {
+			$stats[$row['metric']] = $row['value'];
+		}
+		$stmt = $dbh->prepare(
+		"SELECT day, count(*) as visitors_day
+		from (
+			select 1 as value, date_format(date_created, '%Y-%m-%d') as day
+			from activity_log group by ip, username, user_agent, date_format(date_created, '%Y-%m-%d')
+		) individ_users
+		group by day");
+		$stmt->execute();
+		$results = $stmt->fetchAll();
+
+		return $this->render_action('administrate', 'content', array(
+			'stats' => $stats,
+			'daily_visitors' => $results
+		));
 	}
 }

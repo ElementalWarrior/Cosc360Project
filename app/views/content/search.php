@@ -31,7 +31,7 @@ Html::render_view('sidebar');
 	</div>
 	<?php
 	function render_user($user, $hide_email = false, $hide_image = false, $include_by = false) {
-
+		global $view_data;
 		global $sub_path;
 		echo '<div class="user">';
 		if(!$hide_image) {
@@ -44,7 +44,7 @@ Html::render_view('sidebar');
 		echo '</div>';
 	}
 	 ?>
-	 <?php if(empty($view_data['user_results']) && empty($view_data['content_results'])) { ?>
+	 <?php if($_SERVER['REQUEST_METHOD'] === 'POST' && empty($view_data['user_results']) && empty($view_data['content_results'])) { ?>
 		 <h2>There are no results to display.</h2>
 	 <?php }?>
 	<?php if(!empty($view_data['user_results'])) { ?>

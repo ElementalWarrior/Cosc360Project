@@ -2,7 +2,7 @@
 	global $user;
 ?>
 <section id="sidebar">
-	<?php echo Html::render_action("hot_threads", "content") ?>
+	<?php echo Html::render_view("sidebar") ?>
 </section>
 <section id="posts">
 <!-- <div id="post-header" class="clearfix">

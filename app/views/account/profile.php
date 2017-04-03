@@ -1,6 +1,7 @@
 <?php
 
 global $user;
+global $sub_path;
 $allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_id'] || $user['admin']);
  ?>
 <section id="profile" class="single-centered">
@@ -9,6 +10,7 @@ $allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_i
 		<?php if(!empty($view_data['error'])) {
 			echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";
 		}?>
+		<a href="<?php echo $sub_path;?>/content/activity_by_date/null/<?php echo $view_data['account_id']; ?>">View this users activity.</a>
 	   <table>
 		   <?php if($user['admin']) { ?>
 		<tr>
