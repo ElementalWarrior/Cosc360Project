@@ -177,6 +177,9 @@ fixed width */
 	#posts {
 		flex: 1;
 	}
+	#threads {
+		flex: 1;
+	}
 }
 main {
 	background: #fafafa;
@@ -198,6 +201,24 @@ main > * {
 	width: 100%;
 }
 /************************ home page styles *************************/
+.thread-collapse {
+	border: 1px solid #ee0000;
+	height: 1rem;
+	line-height: 1rem;
+	left: -1.5rem;
+	position: absolute;
+	text-align: center;
+	top: 0;
+	width: 1rem;
+}
+#thread_articles article {
+	position: relative;
+	margin-left: 1rem;
+}
+.embed_posts {
+	padding-left: 2rem;
+}
+#threads article .thread_wrapper,
 #posts article,
 #sidebar article,
 .post {

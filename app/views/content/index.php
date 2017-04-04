@@ -4,7 +4,7 @@
 ?>
 
 <?php echo Html::render_view("sidebar") ?>
-<section id="posts">
+<section id="threads">
 <!-- <div id="post-header" class="clearfix">
 	<div class="post-right">
 		<span class="fa fa-reply"></span>
@@ -19,14 +19,22 @@
 <div id="thread_articles">
 	<?php foreach($view_data as $row) { ?>
 		<article class="index-thread" data-thread-id="<?php echo $row['thread_id']; ?>">
-			<div class="thread-right" aria-hidden="true">
-				<span class="replies"><?php echo $row['num_posts']; ?></span>
-				<?php if($user['admin']) { ?>
-					<button type="button" name="button" class="btn-alt btn-small btnRemoveThread" data-thread-id="<?php echo $row['thread_id']; ?>" aria-hidden="true">Remove Thread</button>
-				<?php } ?>
+			<?php if($row['num_posts'] > 0) { ?>
+			<a href="javascript:ThreadExpand(<?php echo $row['thread_id']; ?>);" class="thread-collapse">+</a>
+			<?php } ?>
+			<div class="thread_wrapper">
+				<div class="thread-right" aria-hidden="true">
+					<span class="replies"><?php echo $row['num_posts']; ?></span>
+					<?php if($user['admin']) { ?>
+						<button type="button" name="button" class="btn-alt btn-small btnRemoveThread" data-thread-id="<?php echo $row['thread_id']; ?>" aria-hidden="true">Remove Thread</button>
+					<?php } ?>
+				</div>
+				<h3 aria-describedby="thread<?php echo $row['thread_id'];?>"><a id="thread<?php echo $row['thread_id'];?>" class="thread-link" href="<?php echo $sub_path; ?>/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
+				<a aria-label="Posted by <?php echo $row['username']; ?>" href="<?php echo $sub_path; ?>/account/profile/<?php echo $row['account_id']; ?>" class="author account-link"><?php echo $row['username']; ?></a>
 			</div>
-			<h3 aria-describedby="thread<?php echo $row['thread_id'];?>"><a id="thread<?php echo $row['thread_id'];?>" class="thread-link" href="<?php echo $sub_path; ?>/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
-			<a aria-label="Posted by <?php echo $row['username']; ?>" href="<?php echo $sub_path; ?>/account/profile/<?php echo $row['account_id']; ?>" class="author account-link"><?php echo $row['username']; ?></a>
+			<div class="embed_posts">
+
+			</div>
 		</article>
 	<?php } ?>
 </div>
@@ -78,5 +86,21 @@
 	function ShowNewThreads() {
 		$('#new_threads_to_show').hide();
 		$('#thread_articles article').show();
+	}
+
+	function ThreadExpand(thread_id) {
+		if($('[data-thread-id=' + thread_id +']').find('.thread-collapse').html() == '-') {
+			$('[data-thread-id=' + thread_id +']').find('.thread-collapse').html('+');
+			$('[data-thread-id=' + thread_id +']').find('.embed_posts').html('');
+			return;
+		}
+		$('[data-thread-id]').find('.thread-collapse').html('+');
+		$('.embed_posts').html('');
+		$.ajax({url: sub_path + '/content/thread_content/' + thread_id, success: function(data){
+				$('[data-thread-id=' + thread_id +']').find('.thread-collapse').html('-');
+				var posts = $(data).find('.post');
+				$('[data-thread-id=' + thread_id +']').find('.embed_posts').append(posts);
+			}
+		})
 	}
 </script>

@@ -439,4 +439,7 @@ class content_controller extends controller{
 		// print_r($ret);
 		return $ret;
 	}
+	public function thread_content($thread_id) {
+		return array('result' => Html::render_action('thread', 'content', [$thread_id]), 'include_layout' => 0);
+	}
 }
