@@ -8,7 +8,7 @@ $allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_i
    <form class="" id="frm-profile" action="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $view_data['account_id']; ?>" method="post" enctype="multipart/form-data">
 		<h2>Profile:</h2>
 		<?php if(!empty($view_data['error'])) {
-			echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";
+			echo "<h3 role=\"alert\"><strong>" . $view_data['error'] . "</strong></h3>";
 		}?>
 		<a href="<?php echo $sub_path;?>/content/activity_by_date/null/<?php echo $view_data['account_id']; ?>">View this users activity.</a>
 	   <table>
@@ -23,9 +23,9 @@ $allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_i
 		   <td><?php echo $view_data['username']; ?></td>
 		</tr>
 		<tr>
-			<td><strong>Email: </strong></td>
+			<td><strong><label for="email">Email: </label></strong></td>
 			<?php if($allow_submit){ ?>
-				<td><input type="email" name="email" value="<?php echo $view_data['email']; ?>" placeholder="Email" required></td>
+				<td><input type="email" name="email" value="<?php echo $view_data['email']; ?>" placeholder="Email" required aria-required="true"></td>
 			<?php } else { ?>
 				<td><?php echo $view_data['email']; ?></td>
 				<?php } ?>
@@ -34,7 +34,7 @@ $allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_i
 			<td><strong>Profile Picture:</strong></td>
 			<td>
 				<div class="">
-					<img id="profile-image" src="data:image/<?php echo $view_data['content_type'] . ';base64,' . base64_encode($view_data['image']); ?>" alt="">
+					<img id="profile-image" src="data:image/<?php echo $view_data['content_type'] . ';base64,' . base64_encode($view_data['image']); ?>" alt="<?php echo $view_data['username'];?>&apos;s profile picture">
 				</div>
 		 	   <div id="image-upload" style="display: none;">
 		 		   <div class="">

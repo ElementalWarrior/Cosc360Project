@@ -12,19 +12,19 @@ Html::render_view('sidebar');
 			<h2>Search</h2>
 			<p>Search by either Username, Email, or post content</p>
 			<div>
-				<input type="text" name="username" value="<?php echo $view_data['username']; ?>" placeholder="Username" />
+				<input type="text" name="username" value="<?php echo $view_data['username']; ?>" placeholder="Username" aria-label="Search by user name" />
 			</div>
 			<div class="or">
 				or
 			</div>
 			<div>
-				<input type="text" name="email" value="<?php echo $view_data['email']; ?>" placeholder="Email" />
+				<input type="text" name="email" value="<?php echo $view_data['email']; ?>" placeholder="Email" aria-label="Search by email" />
 			</div>
 			<div class="or">
 				or
 			</div>
 			<div>
-				<input type="text" name="posts" value="<?php echo $view_data['posts']; ?>" placeholder="Post content" />
+				<input type="text" name="posts" value="<?php echo $view_data['posts']; ?>" placeholder="Post content" aria-label="Search by submitted content" />
 			</div>
 			<button type="submit" name="search" class="btn" id="btnSearch">Search!</button>
 		</form>
@@ -35,11 +35,11 @@ Html::render_view('sidebar');
 		global $sub_path;
 		echo '<div class="user">';
 		if(!$hide_image) {
-			echo '<img id="search-image" class="search-image" src="data:image/' . $user['content_type'] . ';base64,' . base64_encode($user['image']) . '" alt="">';
+			echo '<img id="search-image" class="search-image" src="data:image/' . $user['content_type'] . ';base64,' . base64_encode($user['image']) . '" alt="' . $user['username'] . '&apos;s profile picture">';
 		}
-		echo '<div class="search-username">' . ($include_by ? 'by ' : '') . '<a href="' . $sub_path . '/account/profile/' . $user['account_id'] . '">' . str_replace($view_data['username'], '<span class="underline">' . $view_data['username'] . '</span>', $user['username']) . '</a></div>';
+		echo '<div class="search-username">' . ($include_by ? 'by ' : '') . '<a href="' . $sub_path . '/account/profile/' . $user['account_id'] . '">' . str_replace($user['username'], '<span class="underline">' . $user['username'] . '</span>', $user['username']) . '</a></div>';
 		if(!$hide_email) {
-			echo '<div class="search-email">' . str_replace($view_data['email'], '<span class="underline">' . $view_data['email'] . '</span>', $user['email']) . '</div>';
+			echo '<div class="search-email">' . str_replace($user['email'], '<span class="underline">' . $user['email'] . '</span>', $user['email']) . '</div>';
 		}
 		echo '</div>';
 	}

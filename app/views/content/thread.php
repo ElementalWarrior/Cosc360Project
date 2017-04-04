@@ -4,7 +4,7 @@
 	$thread = $view_data['thread'];
 	$posts = $view_data['posts'];
  ?>
-<?php Html::render_view('sidebar'); ?>
+ <?php echo Html::render_view('sidebar'); ?>
 <section id="thread">
 	<?php if($user['admin']) { ?>
 		<div class="text-right">
@@ -12,26 +12,26 @@
 		</div>
 	<?php } ?>
 	<section class="thread-content">
-		<img src="data:image/<?php echo $thread['content_type'] . ';base64,' . base64_encode($thread['image']);?>" alt="">
+		<img src="data:image/<?php echo $thread['content_type'] . ';base64,' . base64_encode($thread['image']);?>" alt="<?php echo $thread['username'];?>&apos;s profile picture">
 		<h3>
 			<?php echo Html::special_chars($thread['thread_name']); ?>
 			<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $thread['account_id']; ?>" class="author"><?php echo Html::special_chars($thread['username']); ?></a>
 		</h3>
 		<p><?php echo Html::special_chars($thread['thread_body']); ?></p>
-		<a href="<?php echo $sub_path; ?>/content/activity_by_date/<?php echo (new DateTime($thread['date_created']))->format('Y-m-d'); ?>" class="date-posted"><?php echo $thread['date_created']; ?></a>
+		<a aria-label="View activity for <?php echo (new DateTime($thread['date_created']))->format('l F d, Y'); ?>" href="<?php echo $sub_path; ?>/content/activity_by_date/<?php echo (new DateTime($thread['date_created']))->format('Y-m-d'); ?>" class="date-posted"><?php echo $thread['date_created']; ?></a>
 	</section>
 	<section id="posts">
 		<?php foreach($posts as $post) { ?>
 		<div class="post">
-			<img src="data:image/<?php echo $post['content_type'] . ';base64,' . base64_encode($post['image']);?>" alt="">
+			<img src="data:image/<?php echo $post['content_type'] . ';base64,' . base64_encode($post['image']);?>" alt="<?php echo $post['username'];?>&apos;s profile picture">
 			<div class="response-by">Response By:</div>
 			<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $post['account_id']; ?>" class="author"><?php echo $post['username']; ?></a>
 			<p><?php echo Html::special_chars($post['post_body']); ?></p>
 			<?php if($user['admin']) { ?>
 				<a href="<?php global $sub_path; echo $sub_path; ?>/content/edit_post/<?php echo $thread['thread_id']; ?>/<?php echo $post['post_id']; ?>" class="btn-alt btn-small btnEditPost">Edit Post</a>
-				<button type="button" name="button" class="btn-alt btn-small btnRemovePost" data-thread-id="<?php echo $thread['thread_id']; ?>" data-post-id="<?php echo $post['post_id']; ?>">Remove Thread</button>
+				<button type="button" name="button" class="btn-alt btn-small btnRemovePost" data-thread-id="<?php echo $thread['thread_id']; ?>" data-post-id="<?php echo $post['post_id']; ?>">Remove Post</button>
 			<?php } ?>
-			<a href="<?php echo $sub_path; ?>/content/activity_by_date/<?php echo (new DateTime($post['date_created']))->format('Y-m-d'); ?>" class="date-posted"><?php echo $post['date_created']; ?></a>
+			<a aria-label="View activity for <?php echo (new DateTime($post['date_created']))->format('l F d, Y'); ?>" href="<?php echo $sub_path; ?>/content/activity_by_date/<?php echo (new DateTime($post['date_created']))->format('Y-m-d'); ?>" class="date-posted"><?php echo $post['date_created']; ?></a>
 		</div>
 		<?php } ?>
 	</section>
@@ -39,8 +39,8 @@
 	<section id="respond">
 		<h3>Post a response:</h3>
 		<form class="" action="<?php global $sub_path; echo $sub_path; ?>/content/reply/<?php echo Html::special_chars($thread['thread_id']); ?>" method="post">
-			<textarea name="respond" rows="8" cols="80" required></textarea>
-			<input type="submit" name="submit" value="Submit your response!">
+			<textarea name="respond" rows="8" cols="80" required aria-required="true" aria-label="Post a response text box"></textarea>
+			<input type="submit" name="submit" value="Submit your response!" aria-label='Submit response'>
 		</form>
 	</section>
 	<?php } ?>
@@ -85,7 +85,6 @@
 	var sub_path = '<?php echo $sub_path; ?>';
 	var date_last_updated = new Date('<?php echo (new DateTime())->format('Y-m-d H:i:s'); ?>');
 	window.setInterval(function() {
-	console.log(date_last_updated);
 		$.ajax({url: '<?php echo $sub_path;?>/content/check_posts/' + moment(date_last_updated).format('YYYY-MM-DD HH:mm:ss') + '/<?php echo $thread['thread_id']; ?>', success: function(data) {
 
 			data = JSON.parse(data);

@@ -2,9 +2,8 @@
 	global $user;
 	 global $sub_path;
 ?>
-<section id="sidebar">
-	<?php echo Html::render_view("sidebar") ?>
-</section>
+
+<?php echo Html::render_view("sidebar") ?>
 <section id="posts">
 <!-- <div id="post-header" class="clearfix">
 	<div class="post-right">
@@ -20,20 +19,20 @@
 <div id="thread_articles">
 	<?php foreach($view_data as $row) { ?>
 		<article class="index-thread" data-thread-id="<?php echo $row['thread_id']; ?>">
-			<div class="thread-right">
+			<div class="thread-right" aria-hidden="true">
 				<span class="replies"><?php echo $row['num_posts']; ?></span>
 				<?php if($user['admin']) { ?>
-					<button type="button" name="button" class="btn-alt btn-small btnRemoveThread" data-thread-id="<?php echo $row['thread_id']; ?>">Remove Thread</button>
+					<button type="button" name="button" class="btn-alt btn-small btnRemoveThread" data-thread-id="<?php echo $row['thread_id']; ?>" aria-hidden="true">Remove Thread</button>
 				<?php } ?>
 			</div>
-			<h3><a class="thread-link" href="<?php echo $sub_path; ?>/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
-			<a href="<?php echo $sub_path; ?>/account/profile/<?php echo $row['account_id']; ?>" class="author account-link"><?php echo $row['username']; ?></a>
+			<h3 aria-describedby="thread<?php echo $row['thread_id'];?>"><a id="thread<?php echo $row['thread_id'];?>" class="thread-link" href="<?php echo $sub_path; ?>/content/thread/<?php echo $row['thread_id']; ?>"><?php echo Html::special_chars($row['thread_name'])?></a></h3>
+			<a aria-label="Posted by <?php echo $row['username']; ?>" href="<?php echo $sub_path; ?>/account/profile/<?php echo $row['account_id']; ?>" class="author account-link"><?php echo $row['username']; ?></a>
 		</article>
 	<?php } ?>
 </div>
 	<?php if(is_array($user)) { ?>
 	<div class="text-right">
-		<a href="<?php echo $sub_path; ?>/content/new_thread/" class="btn">New Thread</a>
+		<a href="<?php echo $sub_path; ?>/content/new_thread/" class="btn" aria-label="Create a new thread">New Thread</a>
 	</div>
 	<?php } ?>
 </section>
@@ -53,7 +52,6 @@
 <script type="text/javascript">
 	var sub_path = '<?php echo $sub_path; ?>';
 	var date_last_updated = new Date('<?php echo (new DateTime())->format('Y-m-d H:i:s'); ?>');
-	console.log(date_last_updated);
 	window.setInterval(function() {
 		$.ajax({url: '<?php echo $sub_path;?>/content/check_thread/' + moment(date_last_updated).format('YYYY-MM-DD HH:mm:ss'), success: function(data) {
 

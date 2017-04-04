@@ -1,10 +1,10 @@
 <?php
 global $user;
-global $sub_path; 
+global $sub_path;
  ?>
-	<header>
+	<header role="banner">
 		<h1><a href="<?php echo $sub_path; ?>/">MyDiscussionForum</a></h1>
-		<nav>
+		<nav id="header-nav" role="navigation">
 			<ul>
 				<li><a href="<?php echo $sub_path; ?>/">Home</a></li>
 

@@ -10,9 +10,9 @@
 		<div class="entry">
 			<h2>Edit Post</h2>
 			<?php if($view_data != null && !empty($view_data['error'])) {
-				echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";
+				echo "<h3 role=\"alert\"><strong>" . $view_data['error'] . "</strong></h3>";
 			}?>
-			<textarea name="post_body" id="post_body" placeholder="Post Body" required><?php echo $view_data['post_body']; ?></textarea>
+			<textarea name="post_body" id="post_body" placeholder="Post Body" required aria-required="true"><?php echo $view_data['post_body']; ?></textarea>
 		</div>
 
 		<section id="preview" style="display: none;">

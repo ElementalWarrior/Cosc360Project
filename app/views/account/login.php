@@ -5,13 +5,13 @@
 	<form class="" action="<?php global $sub_path; echo $sub_path; ?>/account/login" method="post">
 		<h2>Login:</h2>
 			<?php if(!empty($view_data['error'])) {
-				echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";
+				echo "<h3 role=\"alert\"><strong>" . $view_data['error'] . "</strong></h3>";
 			}?>
 		<div class="">
-			<input type="text" name="username" value="" placeholder="Username" required>
+			<input type="text" name="username" value="" placeholder="Username" required aria-required="true">
 		</div>
 		<div class="">
-			<input type="password" name="password" value="" placeholder="Password" required>
+			<input type="password" name="password" value="" placeholder="Password" required aria-required="true">
 			<div class="">
 				<a href="<?php global $sub_path; echo $sub_path; ?>/account/forgot_password">Forgot your password?</a>
 			</div>

@@ -10,10 +10,10 @@
 		<div class="entry">
 			<h2>New Thread</h2>
 			<?php if($view_data != null && !empty($view_data['error'])) {
-				echo "<h3><strong>" . $view_data['error'] . "</strong></h3>";
+				echo "<h3 role=\"alert\"><strong>" . $view_data['error'] . "</strong></h3>";
 			}?>
-			<input type="text" name="thread_title" id="thread_title" value="" placeholder="Thread Title" required>
-			<textarea name="thread_body" id="thread_body" placeholder="Thread Body" required></textarea>
+			<input type="text" name="thread_title" id="thread_title" value="" placeholder="Thread Title" required aria-required="true">
+			<textarea name="thread_body" id="thread_body" placeholder="Thread Body" required aria-required="true"></textarea>
 		</div>
 
 		<section id="preview" style="display: none;">

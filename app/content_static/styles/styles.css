@@ -142,25 +142,25 @@ footer {
 #breadcrumbs li:last-child::after {
 	content:'';
 }
-nav {
+#header-nav {
 	text-align: right;
 }
-nav ul {
+#header-nav ul {
 	list-style: none inside;
 	margin: 0;
 	padding: 0;
 }
-nav li {
+#header-nav li {
 	display: inline-block;
 }
-nav li a {
+#header-nav li a {
 	border-top: 2px solid #ee0000;
 	box-shadow: 0 0 2px 0 rgba(0,0,0,0.2);
 	display: inline-block;
 	margin-left: 5px;
 	padding: 5px 10px;
 }
-nav li a:hover {
+#header-nav li a:hover {
 	border-color: #FFA552;
 }
 /* using flexbox allows the styling that switches between one/two column very
@@ -252,7 +252,7 @@ main > * {
 	display: inline-block;
 	margin-top: 4px;
 }
-#new_threads_to_show{ 
+#new_threads_to_show{
     background: #ffffbd;
     border: 1px solid #cccc88;
 	display: none;

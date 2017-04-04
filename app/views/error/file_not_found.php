@@ -1,6 +1,7 @@
 
 <section id="missing">
-	<img src="<?php global $sub_path; echo $sub_path; ?>/content_static/images/confused_unicorn.jpg" alt="" />
+	<div style="opacity: 0;" role="alert">File not found. You must have taken a wrong turn.</div>
+	<img src="<?php global $sub_path; echo $sub_path; ?>/content_static/images/confused_unicorn.jpg" alt="Funny looking unicorn image for satirical reasons." />
 	<h1>Oh snap!</h1
 	<p>You must be lost!
 		<br/><br/>
