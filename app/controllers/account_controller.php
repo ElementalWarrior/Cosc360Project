@@ -264,9 +264,9 @@ class account_controller extends controller {
 				':email' => $email,
 				':token' => $token
 			));
-			$href = 'http://' . $_SERVER['SERVER_NAME'] . '/account/change_password/' . $token;
+			$href = 'http://' . $_SERVER['SERVER_NAME'] . "$sub_path/account/change_password/" . $token;
 
-			if(stripos($_SERVER['SERVER_NAME'], 'localhost') !== false) {
+			if(stripos($_SERVER['SERVER_NAME'], 'localhost') === false) {
 				mail($email, "Password Recovery", "Your password has been reset, use this link to recover it $href. This link will remain valid for 1 hour.");
 			}
 

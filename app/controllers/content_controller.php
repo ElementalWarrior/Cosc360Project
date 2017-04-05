@@ -67,6 +67,7 @@ class content_controller extends controller{
 
 	private function post_new_thread() {
 		global $user;
+		global $sub_path;
 
 		$thread_title = trim($_POST['thread_title']);
 		$thread_body = trim($_POST['thread_body']);
