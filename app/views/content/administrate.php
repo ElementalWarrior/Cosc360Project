@@ -1,7 +1,5 @@
 <?php
 global $sub_path;
-global $page_title;
-$page_title = "Administration Page";
 $stats = $view_data['stats'];
 $daily_visitors = $view_data['daily_visitors']
 ?>
@@ -22,7 +20,7 @@ $daily_visitors = $view_data['daily_visitors']
 				</div>
 				<div class="flex-one">
 					<div class="stats">
-						<h2><?php echo (int)$stats['visitors_daily_average']; ?></h2>
+						<h2><?php echo number_format($stats['visitors_daily_average'], 2); ?></h2>
 						<span>Daily Average Visitors</span>
 					</div>
 				</div>
@@ -104,7 +102,10 @@ $daily_visitors = $view_data['daily_visitors']
 
 	</div> -->
 </section>
-
+<?php
+global $page_title;
+$page_title = "Administration Page";
+?>
 
 <script type="text/javascript" src="<?php echo "$sub_path/content_static/scripts/moment.min.js"; ?>"></script>
 <script type="text/javascript" src="<?php echo "$sub_path/content_static/scripts/Chart.min.js"; ?>"></script>

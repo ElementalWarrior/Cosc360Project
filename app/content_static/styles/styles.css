@@ -609,7 +609,8 @@ main > * {
 	border-top: 2px solid #ee0000;
 	box-shadow: 0 4px 6px 0 rgba(0,0,0,0.15), 0px 0 6px 0 rgba(0,0,0,0.15);
 }
-#members {
+#members,
+#user_activity {
 	border-top-color: #0028ee;
 }
 #discussion {
