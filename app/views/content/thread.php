@@ -1,5 +1,7 @@
 <?php
 	global $user;
+	global $page_title;
+	$page_title = "Discussion Thread: " . Html::special_chars($view_data['thread']['thread_name']);
 
 	$thread = $view_data['thread'];
 	$posts = $view_data['posts'];

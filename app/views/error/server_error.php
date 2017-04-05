@@ -4,11 +4,10 @@
 	$page_title = "File not found.";
 ?>
 <section id="missing">
-	<div style="opacity: 0;" role="alert">File not found. You must have taken a wrong turn.</div>
+	<div style="opacity: 0;" role="alert">An error has occurred. This has been logged.</div>
 	<img src="<?php global $sub_path; echo $sub_path; ?>/content_static/images/confused_unicorn.jpg" alt="Funny looking unicorn image for satirical reasons." />
-	<h1>Oh snap!</h1
-	<p>You must be lost!
-		<br/><br/>
+	<h1>Something went wrong!</h1
+	<p>
 		Click <a href="<?php global $sub_path; echo $sub_path; ?>/">here</a> to go to the home page!
 	</p>
 </section>
@@ -20,8 +19,8 @@
 			text: "Home"
 		},
 		{
-			href: "/error/file_not_found",
-			text: "File Not Found"
+			href: "/error/server_error",
+			text: "An error has occurred"
 		}
 	]
 	$(document).ready(Breadcrumbs(crumbs))

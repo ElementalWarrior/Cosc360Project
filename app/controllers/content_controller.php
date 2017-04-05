@@ -67,6 +67,7 @@ class content_controller extends controller{
 
 	private function post_new_thread() {
 		global $user;
+		global $sub_path;
 
 		$thread_title = trim($_POST['thread_title']);
 		$thread_body = trim($_POST['thread_body']);
@@ -265,7 +266,7 @@ class content_controller extends controller{
 			':thread_body' => $thread_body,
 			':thread_id' => $thread_id
 		));
-		$this->log_activity("post_edit", $thread_id, null, true);
+		$this->log_activity("thread_edit", $thread_id, null, true);
 		return $this->render_action('edit_thread', 'content', $view_data);
 	}
 	public function edit_post($thread_id, $post_id) {
@@ -327,7 +328,34 @@ class content_controller extends controller{
 		$this->log_activity("post_edit", $thread_id, $post_id, true);
 		return $this->render_action('edit_post', 'content', $view_data);
 	}
+	public function activity_admin($date = null, $account_id = null) {
+		global $user;
+		if(empty($user['admin']) || !$user['admin']) {
+			return Html::render_action('file_not_found', 'error');
+		}
+		$this->log_activity("view",null,null,true);
+		$dbh = $this->create_db_connection();
+		$stmt = $dbh->prepare(
+			'SELECT al.*, thread_name from activity_log al
+			left join threads t on t.thread_id = al.thread_id
+			where (admin_action = 0 or admin_action = :admin)
+			and (:date is null or al.date_created >= :date and al.date_created < date_add(:date, interval 1 day))
+			and (:account_id is null or al.account_id = :account_id)
+			order by al.date_created desc');
+		$stmt->execute(array(
+			':admin' => empty($user['admin']) ? 0 : $user['admin'] ? 1 : 0,
+			':date' => $date,
+			':account_id' => $account_id
+		));
+		$results = $stmt->fetchAll();
+		$view_data = array(
+			'results' => $results,
+			'date' => null
+		);
+		return $this->render_action('activity_by_date', 'content', $view_data);
+	}
 	public function activity_by_date($date = null, $account_id = null) {
+		global $user;
 		if($account_id != null) {
 			$account_id = (int)$account_id;
 		}
@@ -349,28 +377,34 @@ class content_controller extends controller{
 			':account_id' => $account_id
 		));
 		$results = $stmt->fetchAll();
-		return $this->render_action('activity_by_date', 'content', $results);
+		$view_data = array(
+			'results' => $results,
+			'date' => $date
+		);
+		return $this->render_action('activity_by_date', 'content', $view_data);
 	}
 	public function administrate() {
 		global $user;
 		if(empty($user['admin']) || !$user['admin']) {
-			return $this->render_action('file_not_found', 'error');
+			return Html::render_action('file_not_found', 'error');
 		}
-		$this->log_activity("view");
+		$this->log_activity("view",null,null,true);
 		$dbh = $this->create_db_connection();
 		$stmt = $dbh->prepare(
 			"SELECT 'visitors_today' as metric, count(*) as value from (select 1 from activity_log where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') group by ip, username, user_agent) individ_users union all
 
 			SELECT 'visitors_members_today' as metric, count(*) as value from (select 1 from activity_log where account_id is not null and date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') group by ip, username, user_agent) individ_users union all
 
-			SELECT  'visitors_daily_average' as metric, sum(visitors_day) / count(*) from (
-			    SELECT count(*) as visitors_day
-			    from (
-			        select 1 as value, date_format(date_created, '%Y-%m-%d') as day
-			        from activity_log group by ip, username, user_agent, date_format(date_created, '%Y-%m-%d')
-			    ) individ_users
-			    group by day
-			) agg union all
+
+			SELECT  'visitors_daily_average' as metric, sum(visitors_day) / case when datediff(now(), min_date) = 0 then 1 else datediff(now(), min_date) end from (
+				SELECT count(*) as visitors_day, min_date, datediff(now(), min_date)
+				from (
+					select 1 as value, date_format(date_created, '%Y-%m-%d') as day
+					from activity_log group by ip, username, user_agent, date_format(date_created, '%Y-%m-%d')
+				) individ_users,
+				(select min(date_created) as min_date from activity_log) min_date
+				group by day
+			) agg  union all
 
 			select 'members', count(*) from accounts union all
 
@@ -433,13 +467,56 @@ class content_controller extends controller{
 		for($i = 0; $i < count($results); $i++) {
 			$results[$i]['image'] = base64_encode($results[$i]['image']);
 		}
-		// print_r($results);
 
 		$ret = array('result' => json_encode($results), 'include_layout' => 0);
-		// print_r($ret);
 		return $ret;
 	}
 	public function thread_content($thread_id) {
 		return array('result' => Html::render_action('thread', 'content', [$thread_id]), 'include_layout' => 0);
+	}
+	public function announcements() {
+
+		$dbh = $this->create_db_connection();
+
+		$stmt = $dbh->prepare('SELECT an.*, a.username from announcements an
+			join accounts a on an.account_id = a.account_id
+			where date_archived is null
+			order by date_created desc');
+		$stmt->execute();
+		$results = $stmt->fetchAll();
+		return $this->render_action('announcements', 'content', $results);
+	}
+	public function submit_announcement() {
+		global $user;
+		global $sub_path;
+		if($_SERVER['REQUEST_METHOD'] !== "POST" || empty($user) || !$user['admin']) {
+			return Html::render_action('file_not_found', 'error');
+		}
+		$dbh = $this->create_db_connection();
+
+		$stmt = $dbh->prepare('INSERT into announcements(announcement_title, announcement_body, account_id) select :title, :body, :account_id');
+		$stmt->execute(array(
+			':title' => $_POST['announcement_title'],
+			':body' => $_POST['announcement_body'],
+			':account_id' => $user['account_id']
+		));
+		$this->log_activity("announcement_submit");
+		header("Location: $sub_path/");
+	}
+	public function remove_announcement($announcement_id) {
+		global $user;
+		global $sub_path;
+		if(empty($user) || !$user['admin']) {
+			return Html::render_action('file_not_found', 'error');
+		}
+		$announcement_id = (int)$announcement_id;
+		$dbh = $this->create_db_connection();
+
+		$stmt = $dbh->prepare('UPDATE announcements set date_archived = now() where announcement_id = :id');
+		$stmt->execute(array(
+			':id' => $announcement_id
+		));
+		$this->log_activity("announcement_remove");
+		header("Location: $sub_path/");
 	}
 }

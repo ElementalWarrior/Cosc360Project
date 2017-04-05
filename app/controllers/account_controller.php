@@ -225,7 +225,6 @@ class account_controller extends controller {
 	}
 
 	public function forgot_password() {
-
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
 			return $this->post_forgot_password();
 		}
@@ -233,6 +232,7 @@ class account_controller extends controller {
 		return $this->render_action('forgot_password', 'account');
 	}
 	private function post_forgot_password() {
+		global $sub_path;
 		$view_data = array();
 		$email = $_POST['email'];
 
@@ -264,13 +264,49 @@ class account_controller extends controller {
 				':email' => $email,
 				':token' => $token
 			));
-			$href = 'http://' . $_SERVER['SERVER_NAME'] . '/account/change_password/' . $token;
+			$href = 'http://' . $_SERVER['SERVER_NAME'] . "$sub_path/account/recover_password/" . $token;
+			$mail_sent = false;
+			if(stripos($_SERVER['SERVER_NAME'], 'localhost') === false || true) {
+				$mail             = new PHPMailer();
 
-			if(stripos($_SERVER['SERVER_NAME'], 'localhost') !== false) {
-				mail($email, "Password Recovery", "Your password has been reset, use this link to recover it $href. This link will remain valid for 1 hour.");
+				$mail->IsSMTP(); // telling the class to use SMTP
+				$mail->SMTPDebug  = stripos($_SERVER['SERVER_NAME'],'localhost') !== false ? 2 : 0;                     // enables SMTP debug information (for testing)
+				                                           // 1 = errors and messages
+				                                           // 2 = messages only
+				$mail->SMTPAuth   = true;                  // enable SMTP authentication
+				$mail->SMTPSecure = "tls";
+				$mail->Host       = "smtp.gmail.com";      // SMTP server
+				$mail->Port       = 587;                   // SMTP port
+				$mail->Username   = "cosc360email@gmail.com";  // username
+				$mail->Password   = "c0sc360email";            // password
+
+				$mail->SetFrom('cosc360email@gmail.com', 'no-reply');
+
+				$mail->Subject    = "Password Recovery Email";
+				$mail->Body = "Your password has been reset, use this link to recover it $href. This link will remain valid for 1 hour.";
+				// $mail->MsgHTML("Password Recovery", "Your password has been reset, use this link to recover it $href. This link will remain valid for 1 hour.");
+
+				$address = $email;
+				// $address = 'foo@example.com';
+				$mail->AddAddress($address);
+
+				ob_start();
+				$mail->Debugoutput = 'echo';
+
+				$mail_sent = $mail->Send();
+				$error = ob_get_contents();
+				ob_end_clean();
+
+				if($mail_sent) {
+					$view_data['error'] = 'A recovery email has been sent to the address provided.';
+				} else {
+					throw new Exception($error);
+				}
+			}
+			if(!$mail_sent) {
+				$view_data['error'] = 'There was a problem sending a email to the address provided.';
 			}
 
-			$view_data['error'] = 'A recovery email has been sent to the address provided.';
 
 		}
 		return $this->render_action('forgot_password', 'account', $view_data);
@@ -370,6 +406,6 @@ class account_controller extends controller {
 			':account_id' => $account_id,
 			':status' => $value
 		));
-		return "True";
+		return array('result' => "True", 'include_layout' => 0);
 	}
 }

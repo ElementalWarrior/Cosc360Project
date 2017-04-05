@@ -1,6 +1,8 @@
 
 <?php
 	global $user;
+	global $page_title;
+	$page_title = "New Thread";
 
 	Html::render_view('sidebar');
  ?>

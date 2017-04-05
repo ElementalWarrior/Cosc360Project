@@ -1,9 +1,12 @@
 <?php
-
+ global $sub_path;
+ global $page_title;
+ $page_title = "Register for an account";
  ?>
 <section id="register" class="single-centered">
-	<form class="" id="frm-register" action="<?php global $sub_path; echo $sub_path; ?>/account/register" method="post" enctype="multipart/form-data">
+	<form class="" id="frm-register" action="<?php echo $sub_path; ?>/account/register" method="post" enctype="multipart/form-data">
 		<h2>Register:</h2>
+		<p>Register for an account.</p>
 			<?php if(!empty($view_data['error'])) {
 				echo "<h3 role=\"alert\"><strong>" . $view_data['error'] . "</strong></h3>";
 			}?>

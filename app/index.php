@@ -1,4 +1,5 @@
 <?php
+require '../vendor/autoload.php';
 date_default_timezone_set("America/Vancouver");
 session_start();
 require_once('helper.php');
@@ -40,16 +41,40 @@ function handle_error($errno, $errstr, $errfile, $errline) {
 		':trace' => $e->getTraceAsString()
 	));
 	if(stripos($_SERVER['SERVER_NAME'],'localhost') !== false) {
+		echo $e->getMessage();
+		echo $e->getTraceAsString();
 		if($errno == E_USER_ERROR)
 		{
-			http_response_code(500);
-			throw $e;
-		} else {
-			echo $e->getMessage();
+			die();
 		}
+	} else {
+		global $page_body;
+		$page_body = Html::render_action('server_error', 'error');
+		Html::render_view('layout');
 	}
+	http_response_code(500);
 }
 set_error_handler('handle_error');
+
+function handle_exception($e) {
+
+	$dbh = controller::create_db_connection();
+	$stmt = $dbh->prepare('INSERT into error_log(message, stack_trace) select :msg, :trace');
+	$stmt->execute(array(
+		':msg' => $e->getMessage(),
+		':trace' => $e->getTraceAsString()
+	));
+	if(stripos($_SERVER['SERVER_NAME'],'localhost') !== false) {
+		echo $e->getMessage();
+		echo $e->getTraceAsString();
+	} else {
+		global $page_body;
+		$page_body = Html::render_action('server_error', 'error');
+		Html::render_view('layout');
+	}
+	http_response_code(500);
+}
+set_exception_handler('handle_exception');
 
 $file = array_reverse(explode('/', $_SERVER['SCRIPT_NAME']))[0];
 $sub_path = str_replace($file, '', $_SERVER['SCRIPT_NAME']);
@@ -140,9 +165,14 @@ switch($routing_info['code']) {
 		break;
 }
 $page_body = '';
+$page_title = "";
 function render_body(){
 	global $page_body;
 	echo $page_body;
+}
+function page_title() {
+	global $page_title;
+	echo $page_title;
 }
 if($routing_info['code'] != 2) {
 	$include_layout = true;
@@ -154,7 +184,7 @@ if($routing_info['code'] != 2) {
 		if(isset($action_result['include_layout'])) {
 			$include_layout = $action_result['include_layout'] == 1;
 		}
-		
+
 		if(!$include_layout){
 			echo $page_body;
 		}

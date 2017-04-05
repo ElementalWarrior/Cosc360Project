@@ -15,5 +15,6 @@
 				<li>See rules 1 and 2</li>
 			</ol>
 		</article> -->
+		<?php echo Html::render_action('announcements', 'content'); ?>
 		<?php echo Html::render_action('hot_threads', 'content'); ?>
 	</section>
