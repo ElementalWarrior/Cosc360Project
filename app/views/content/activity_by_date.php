@@ -6,8 +6,19 @@ $page_title = "Activity By Date: " . $view_data['date'];
 if(empty($view_data['date'])) {
 	$page_title = "Activity";
 }
+
+$num_filtered_results = 0;
+foreach($view_data['results'] as $activity) {
+	if((empty($user['admin']) || !$user['admin']) && !in_array($activity['action'], ['thread_submit', 'post_submit'])) {
+		continue;
+	}
+	$num_filtered_results++;
+}
 // print_r($view_data['results']);;
 ?>
+<?php if($num_filtered_results == 0) { ?>
+	<h2 role="alert" class="text-center">There is no activity to show.</h2>
+<?php } else { ?>
 <table class="table-padded table-striped" id="table-activity">
 	<thead>
 		<tr>
@@ -25,7 +36,7 @@ if(empty($view_data['date'])) {
 	</thead>
 		<tbody>
 			<?php foreach($view_data['results'] as $activity) {
-				if((empty($user['admin']) || !$user['admin']) && !in_array($activity['action'], ['view', 'thread_submit', 'post_submit'])) {
+				if((empty($user['admin']) || !$user['admin']) && !in_array($activity['action'], ['thread_submit', 'post_submit'])) {
 					continue;
 				}
 				$username = $activity['username'];
@@ -121,6 +132,14 @@ if(empty($view_data['date'])) {
 								echo "$profile_link set the account status of account_id: <a href=\"$sub_path/account/profile/$set_id\">$set_id</a> to $value";
 								break;
 
+							case 'announcement_remove':
+								$set_id = (int)preg_replace('/.*?\/([0-9]+).*/', '$1', $request_uri);
+								echo "$profile_link removed the announcement with id $set_id";
+								break;
+
+							case 'announcement_submit':
+								echo "$profile_link submitted a new announcement.";
+								break;
 
 						}
 						?></td>
@@ -134,3 +153,4 @@ if(empty($view_data['date'])) {
 
 	</tbody>
 </table>
+<?php } ?>

@@ -349,7 +349,8 @@ class content_controller extends controller{
 		));
 		$results = $stmt->fetchAll();
 		$view_data = array(
-			'results' => $results
+			'results' => $results,
+			'date' => null
 		);
 		return $this->render_action('activity_by_date', 'content', $view_data);
 	}
@@ -394,14 +395,16 @@ class content_controller extends controller{
 
 			SELECT 'visitors_members_today' as metric, count(*) as value from (select 1 from activity_log where account_id is not null and date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') group by ip, username, user_agent) individ_users union all
 
-			SELECT  'visitors_daily_average' as metric, sum(visitors_day) / count(*) from (
-			    SELECT count(*) as visitors_day
-			    from (
-			        select 1 as value, date_format(date_created, '%Y-%m-%d') as day
-			        from activity_log group by ip, username, user_agent, date_format(date_created, '%Y-%m-%d')
-			    ) individ_users
-			    group by day
-			) agg union all
+
+			SELECT  'visitors_daily_average' as metric, sum(visitors_day) / case when datediff(now(), min_date) = 0 then 1 else datediff(now(), min_date) end from (
+				SELECT count(*) as visitors_day, min_date, datediff(now(), min_date)
+				from (
+					select 1 as value, date_format(date_created, '%Y-%m-%d') as day
+					from activity_log group by ip, username, user_agent, date_format(date_created, '%Y-%m-%d')
+				) individ_users,
+				(select min(date_created) as min_date from activity_log) min_date
+				group by day
+			) agg  union all
 
 			select 'members', count(*) from accounts union all
 
@@ -497,6 +500,7 @@ class content_controller extends controller{
 			':body' => $_POST['announcement_body'],
 			':account_id' => $user['account_id']
 		));
+		$this->log_activity("announcement_submit");
 		header("Location: $sub_path/");
 	}
 	public function remove_announcement($announcement_id) {
@@ -512,6 +516,7 @@ class content_controller extends controller{
 		$stmt->execute(array(
 			':id' => $announcement_id
 		));
+		$this->log_activity("announcement_remove");
 		header("Location: $sub_path/");
 	}
 }
