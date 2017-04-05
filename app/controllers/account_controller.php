@@ -264,7 +264,7 @@ class account_controller extends controller {
 				':email' => $email,
 				':token' => $token
 			));
-			$href = 'http://' . $_SERVER['SERVER_NAME'] . "$sub_path/account/change_password/" . $token;
+			$href = 'http://' . $_SERVER['SERVER_NAME'] . "$sub_path/account/recover_password/" . $token;
 			$mail_sent = false;
 			if(stripos($_SERVER['SERVER_NAME'], 'localhost') === false || true) {
 				$mail             = new PHPMailer();
