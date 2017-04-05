@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="English">
 	<head>
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="<?php global $sub_path; echo $sub_path; ?>/content_static/styles/styles.css">
-		<title>Index</title>
+		<title><?php echo page_title(); ?></title>
 		<script src="<?php global $sub_path; echo $sub_path; ?>/content_static/scripts/jquery-3.2.0.min.js"></script>
 
 		<script type="text/javascript" src="<?php echo "$sub_path/content_static/scripts/moment.min.js"; ?>"></script>

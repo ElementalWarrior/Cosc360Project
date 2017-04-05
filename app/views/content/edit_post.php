@@ -1,6 +1,8 @@
 
 <?php
 	global $user;
+	global $page_title;
+	$page_title = "Edit Post";
 
 	Html::render_view('sidebar');
  ?>

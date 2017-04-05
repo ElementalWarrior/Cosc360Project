@@ -12,7 +12,7 @@ a,
 	text-decoration: none;
 }
 a.a-alt {
-	color: #aaa;
+	color: #757575;
 }
 a:hover {
 	color: #FFA552;
@@ -230,6 +230,7 @@ main > * {
 }
 #sidebar article {
 	border-color: #ac52ff;
+	margin-bottom: 2rem;
 }
 @media screen and (max-width: 767px) {
 	#sidebar {
@@ -248,7 +249,7 @@ main > * {
 	margin-bottom: 0;
 }
 .author {
-	color: #aaa;
+	color: #757575;
 	display: block;
 	font-family: Lato, arial, helvetica, 'sans-serif';
 	font-size: 0.7rem;
@@ -366,7 +367,7 @@ main > * {
 	width: 40px;
 }
 .date-posted {
-	color: #aaa;
+	color: #757575;
 	font-size: 0.8rem;
 	position: absolute;
 	right: 0.5rem;

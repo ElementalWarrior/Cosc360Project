@@ -1,6 +1,8 @@
 <?php
 	global $user;
-	 global $sub_path;
+	global $sub_path;
+	global $page_title;
+	$page_title = "My Discussion Forum Homepage";
 ?>
 
 <?php echo Html::render_view("sidebar") ?>
@@ -20,7 +22,7 @@
 	<?php foreach($view_data as $row) { ?>
 		<article class="index-thread" data-thread-id="<?php echo $row['thread_id']; ?>">
 			<?php if($row['num_posts'] > 0) { ?>
-			<a href="javascript:ThreadExpand(<?php echo $row['thread_id']; ?>);" class="thread-collapse">+</a>
+			<a href="javascript:ThreadExpand(<?php echo $row['thread_id']; ?>);" class="thread-collapse" title="Expand thread to show posts.">+</a>
 			<?php } ?>
 			<div class="thread_wrapper">
 				<div class="thread-right" aria-hidden="true">

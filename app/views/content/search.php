@@ -1,6 +1,8 @@
 <?php
 
 global $sub_path;
+global $page_title;
+$page_title = "Search Page";
 Html::render_view('sidebar');
 ?>
 

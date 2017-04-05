@@ -140,9 +140,14 @@ switch($routing_info['code']) {
 		break;
 }
 $page_body = '';
+$page_title = "";
 function render_body(){
 	global $page_body;
 	echo $page_body;
+}
+function page_title() {
+	global $page_title;
+	echo $page_title;
 }
 if($routing_info['code'] != 2) {
 	$include_layout = true;
@@ -154,7 +159,7 @@ if($routing_info['code'] != 2) {
 		if(isset($action_result['include_layout'])) {
 			$include_layout = $action_result['include_layout'] == 1;
 		}
-		
+
 		if(!$include_layout){
 			echo $page_body;
 		}

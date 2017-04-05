@@ -1,6 +1,11 @@
 <?php
 global $sub_path;
 global $user;
+global $page_title;
+$page_title = "Activity By Date: " . $view_data['date'];
+if(empty($view_data['date'])) {
+	$page_title = "Activity";
+}
 // print_r($view_data['results']);;
 ?>
 <table class="table-padded table-striped" id="table-activity">

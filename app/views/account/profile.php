@@ -2,6 +2,8 @@
 
 global $user;
 global $sub_path;
+global $page_title;
+$page_title = "Profile for " . $view_data['username'];
 $allow_submit = is_array($user) && ($user['account_id'] == $view_data['account_id'] || $user['admin']);
  ?>
 <section id="profile" class="single-centered">

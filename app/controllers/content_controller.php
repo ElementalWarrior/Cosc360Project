@@ -376,7 +376,8 @@ class content_controller extends controller{
 		));
 		$results = $stmt->fetchAll();
 		$view_data = array(
-			'results' => $results
+			'results' => $results,
+			'date' => $date
 		);
 		return $this->render_action('activity_by_date', 'content', $view_data);
 	}

@@ -1,8 +1,11 @@
 <?php
 
+global $page_title;
+$page_title = "Recover your Password";
+global $sub_path;
  ?>
 <section id="recover_password">
-	<form class="" action="<?php global $sub_path; echo $sub_path; ?>/account/recover_password/<?php echo $view_data['token']; ?>" method="post">
+	<form class="" action="<?php echo $sub_path; ?>/account/recover_password/<?php echo $view_data['token']; ?>" method="post">
 		<h2>Change Password</h2>
 		<?php if(!empty($view_data['error'])) {
 			echo "<h3 role=\"alert\"><strong>" . $view_data['error'] . "</strong></h3>";

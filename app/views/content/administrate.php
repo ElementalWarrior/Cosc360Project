@@ -1,5 +1,7 @@
 <?php
 global $sub_path;
+global $page_title;
+$page_title = "Administration Page";
 $stats = $view_data['stats'];
 $daily_visitors = $view_data['daily_visitors']
 ?>
