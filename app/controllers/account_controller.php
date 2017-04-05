@@ -370,6 +370,6 @@ class account_controller extends controller {
 			':account_id' => $account_id,
 			':status' => $value
 		));
-		return "True";
+		return array('result' => "True", 'include_layout' => 0);
 	}
 }

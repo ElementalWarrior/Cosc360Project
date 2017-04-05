@@ -244,7 +244,7 @@ main > * {
 	margin-top:-0.5rem;
 	padding: 0.5rem;
 }
-#posts h3 {
+.index-thread h3 {
 	margin-bottom: 0;
 }
 .author {
@@ -594,4 +594,114 @@ main > * {
 #table-activity thead th {
 	background: rgba(0,0,0,0.025);
 	border-bottom: 2px solid #f1d9d9;
+}
+/************ administration page ***********/
+#administrate #table-activity td {
+	word-break: break-all;
+}
+
+#administrate > [class^=flex] {
+	margin-bottom: 2rem;
+}
+.admin-group {
+	background: #f8f8f8;
+	border-top: 2px solid #ee0000;
+	box-shadow: 0 4px 6px 0 rgba(0,0,0,0.15), 0px 0 6px 0 rgba(0,0,0,0.15);
+}
+#members {
+	border-top-color: #0028ee;
+}
+#discussion {
+	border-top-color: #5dc04b;
+}
+#pie-visitors-chart {
+	flex: 2;
+}
+#daily_visitors {
+	border-top-color: #5dc04b;
+}
+#user_activity > div {
+	overflow: auto;
+	max-height: 400px;
+}
+.chart-wrapper canvas {
+	height: 300px!important;
+	width: 100%!important;
+}
+.chart-wrapper {
+	padding: 0.5rem;
+}
+.admin-header {
+	border-bottom: 2px solid #e8e8e8;
+	padding: 0.75rem 0.5rem 0.5rem 0.5rem;
+	margin: 0 0.5rem;
+}
+.flex {
+	justify-content: space-between;
+	display: flex;
+}
+.flex-one, .flex-two, .flex-three {
+	display: flex;
+	padding: 0 1rem;
+}
+.flex-one > *,
+.flex-two > *,
+.flex-three > * {
+	flex: 1;
+}
+.flex-one {
+	flex: 1;
+}
+.flex-one + .flex-two {
+	padding-lefT: 3rem;
+}
+.flex-one + .flex-two > * {
+	margin-left: -2rem;
+}
+.flex-two + .flex-one {
+	padding-lefT: 3rem;
+}
+.flex-two + .flex-one > * {
+	margin-left: -2rem;
+}
+.flex-two {
+	flex: 2;
+}
+.flex-three {
+	flex: 3;
+}
+.flex-wrap {
+	flex-wrap: wrap;
+}
+.clear-flex {
+	width: 100%;
+}
+.stats {
+	margin: 0 0 1rem 0;
+	text-align: center
+}
+.stats h2 {
+	margin: 1rem 0 0.5rem 0;
+}
+.stats span {
+	display: inline-block;
+	font-size: 0.8rem;
+	margin: 0 0.5rem;
+}
+#submit_announcement [type=text],
+#submit_announcement textarea {
+	box-sizing: border-box;
+	width: 100%;
+}
+#submit_announcement input,
+#submit_announcement textarea {
+	margin-bottom: 1rem;
+}
+.announcement {
+	position: relative;
+}
+.btnRemoveAnnouncement {
+	position: absolute;
+	right: 0.5rem;
+	/*bottom: 0.5rem;*/
 }

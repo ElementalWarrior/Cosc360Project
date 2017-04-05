@@ -4,6 +4,10 @@ $stats = $view_data['stats'];
 $daily_visitors = $view_data['daily_visitors']
 ?>
 <section id="administrate" class="flex flex-wrap">
+	<h2>Administration Page</h2>
+	<div class="clear-flex">
+
+	</div>
 	<div class="flex-one">
 		<div id="visitors" class="admin-group">
 			<h4 class="admin-header">Visitors</h4>
@@ -84,6 +88,16 @@ $daily_visitors = $view_data['daily_visitors']
 			</div>
 		</div>
 	</div>
+	<div class="clear-flex"></div>
+	<div class="flex-three">
+		<div class="admin-group" id="user_activity">
+			<h4 class="admin-header">User activity</h4>
+			<input type="text" id="activity_filter" value="" placeholder="Filter by Action Taken" /> <a href="javascript:ShowPossibleActions();">Show possible actions</a>
+			<div class="">
+				<?php echo Html::render_action('activity_admin', 'content'); ?>
+			</div>
+		</div>
+	</div>
 	<!-- <div class="flex-one admin-group">
 
 	</div> -->
@@ -145,11 +159,9 @@ $daily_visitors = $view_data['daily_visitors']
 		};
 		var date_comp = data.labels[data.labels.length-1].split('-');
 		date_comp[2] = parseInt(date_comp[2])+1;
-		console.log(date_comp);
 		if(date_comp[2].toString().length == 1) {
 			date_comp[2] = '0' + date_comp[2].toString();
 		}
-		console.log(max)
 		var max = date_comp.join('-')
 		var options = {
 			responsize: true,
@@ -181,84 +193,28 @@ $daily_visitors = $view_data['daily_visitors']
 	})
 </script>
 
-<style media="screen">
-	#administrate > [class^=flex] {
-		margin-bottom: 2rem;
+<script type="text/javascript">
+	$('body').on('keyup', '#activity_filter', function(e) {
+		var search_term = $(e.target).val().toLowerCase();
+		if(search_term.trim() == "") {
+			$('[data-action]').show();
+			$('[data-action]').each(function() {
+				$(this).find('.tdAction').html($(this).attr('data-action'));
+			})
+		} else {
+			$('[data-action]').each(function() {
+				if($(this).attr('data-action').toLowerCase().indexOf(search_term) == -1) {
+					$(this).hide();
+				} else {
+					var text = $(this).find('.tdAction').text();
+					$(this).find('.tdAction').html(text.replace(search_term.toLowerCase(), '<span class="underline">' + search_term + '</span>'));
+				}
+			})
+		}
+
+	})
+	function ShowPossibleActions() {
+		var actions = 'view\npost_submit\nthread_submit\nsearch\nthread_remove\npost_remove\npost_edit\nlogin\nlogout\nregister\nprofile_update\nforgot_password_invalid\nforgot_password\nrecover_password\naccount_status';
+		alert('Possible Actions:\n\n' + actions)
 	}
-	.admin-group {
-		background: #f8f8f8;
-		border-top: 2px solid #ee0000;
-		box-shadow: 0 4px 6px 0 rgba(0,0,0,0.15), 0px 0 6px 0 rgba(0,0,0,0.15);
-	}
-	#members {
-		border-top-color: #0028ee;
-	}
-	#discussion {
-		border-top-color: #5dc04b;
-	}
-	#pie-visitors-chart {
-		flex: 2;
-	}
-	#daily_visitors {
-		border-top-color: #5dc04b;
-	}
-	.chart-wrapper canvas {
-		height: 300px!important;
-		width: 100%!important;
-	}
-	.chart-wrapper {
-		padding: 0.5rem;
-	}
-	.admin-header {
-		border-bottom: 2px solid #e8e8e8;
-		padding: 0.75rem 0.5rem 0.5rem 0.5rem;
-		margin: 0 0.5rem;
-	}
-	.flex {
-		justify-content: space-between;
-		display: flex;
-	}
-	.flex-one, .flex-two {
-		display: flex;
-		padding: 0 1rem;
-	}
-	.flex-one > *, .flex-two > * {
-		flex: 1;
-	}
-	.flex-one {
-		flex: 1;
-	}
-	.flex-one + .flex-two {
-		padding-lefT: 3rem;
-	}
-	.flex-one + .flex-two > * {
-		margin-left: -2rem;
-	}
-	.flex-two + .flex-one {
-		padding-lefT: 3rem;
-	}
-	.flex-two + .flex-one > * {
-		margin-left: -2rem;
-	}
-	.flex-two {
-		flex: 2;
-	}
-	.flex-wrap {
-		flex-wrap: wrap;
-	}
-	.clear-flex {
-		width: 100%;
-	}
-	.stats {
-		margin: 0 0 1rem 0;
-		text-align: center
-	}
-	.stats h2 {
-		margin: 1rem 0 0.5rem 0;
-	}
-	.stats span {
-		display: inline-block;
-		font-size: 0.8rem;
-		margin: 0 0.5rem;
-	}
-</style>
+</script>
