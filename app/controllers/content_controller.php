@@ -394,8 +394,9 @@ class content_controller extends controller{
 
 			SELECT 'visitors_members_today' as metric, count(*) as value from (select 1 from activity_log where account_id is not null and date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') group by ip, username, user_agent) individ_users union all
 
-			SELECT  'visitors_daily_average' as metric, sum(visitors_day) / datediff(now(), min_date) from (
-				SELECT count(*) as visitors_day, min_date
+
+			SELECT  'visitors_daily_average' as metric, sum(visitors_day) / case when datediff(now(), min_date) = 0 then 1 else datediff(now(), min_date) end from (
+				SELECT count(*) as visitors_day, min_date, datediff(now(), min_date)
 				from (
 					select 1 as value, date_format(date_created, '%Y-%m-%d') as day
 					from activity_log group by ip, username, user_agent, date_format(date_created, '%Y-%m-%d')
