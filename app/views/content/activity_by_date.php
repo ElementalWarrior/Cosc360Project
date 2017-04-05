@@ -121,6 +121,14 @@ if(empty($view_data['date'])) {
 								echo "$profile_link set the account status of account_id: <a href=\"$sub_path/account/profile/$set_id\">$set_id</a> to $value";
 								break;
 
+							case 'announcement_remove':
+								$set_id = (int)preg_replace('/.*?\/([0-9]+).*/', '$1', $request_uri);
+								echo "$profile_link removed the announcement with id $set_id";
+								break;
+
+							case 'announcement_submit':
+								echo "$profile_link submitted a new announcement.";
+								break;
 
 						}
 						?></td>

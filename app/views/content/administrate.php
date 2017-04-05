@@ -217,7 +217,7 @@ $page_title = "Administration Page";
 
 	})
 	function ShowPossibleActions() {
-		var actions = 'view\npost_submit\nthread_submit\nsearch\nthread_remove\npost_remove\npost_edit\nlogin\nlogout\nregister\nprofile_update\nforgot_password_invalid\nforgot_password\nrecover_password\naccount_status';
+		var actions = 'view\npost_submit\nthread_submit\nsearch\nthread_remove\npost_remove\npost_edit\nlogin\nlogout\nregister\nprofile_update\nforgot_password_invalid\nforgot_password\nrecover_password\naccount_status\nannouncement_submit\nannouncement_remove';
 		alert('Possible Actions:\n\n' + actions)
 	}
 </script>
