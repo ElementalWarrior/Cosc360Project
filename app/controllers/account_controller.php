@@ -233,6 +233,7 @@ class account_controller extends controller {
 		return $this->render_action('forgot_password', 'account');
 	}
 	private function post_forgot_password() {
+		global $sub_path;
 		$view_data = array();
 		$email = $_POST['email'];
 
@@ -268,9 +269,11 @@ class account_controller extends controller {
 
 			if(stripos($_SERVER['SERVER_NAME'], 'localhost') === false) {
 				mail($email, "Password Recovery", "Your password has been reset, use this link to recover it $href. This link will remain valid for 1 hour.");
+				$view_data['error'] = 'A recovery email has been sent to the address provided.';
+			} else {
+				$view_data['error'] = 'There was a problem sending a email to the address provided.';
 			}
 
-			$view_data['error'] = 'A recovery email has been sent to the address provided.';
 
 		}
 		return $this->render_action('forgot_password', 'account', $view_data);
