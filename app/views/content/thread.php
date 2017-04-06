@@ -24,7 +24,7 @@
 	</section>
 	<section id="posts">
 		<?php foreach($posts as $post) { ?>
-		<div class="post">
+		<div class="post" data-post-id="<?php echo $post['post_id']; ?>">
 			<img src="data:image/<?php echo $post['content_type'] . ';base64,' . base64_encode($post['image']);?>" alt="<?php echo $post['username'];?>&apos;s profile picture">
 			<div class="response-by">Response By:</div>
 			<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $post['account_id']; ?>" class="author"><?php echo $post['username']; ?></a>
@@ -68,7 +68,7 @@
 		$('.btnRemovePost').on('click', function(e) {
 			var post_id = $(e.target).attr('data-post-id');
 			var thread_id = $(e.target).attr('data-thread-id');
-			$('[data-post-id=' + post_id + ']').closest('.post').remove();
+			$('.btnRemovePost[data-post-id=' + post_id + ']').closest('.post').remove();
 			$.ajax({url: '/content/remove_post/' + thread_id + '/' + post_id}).fail(function() {
 				alert('There was a problem removing the post');
 			});
@@ -90,23 +90,29 @@
 		$.ajax({url: '<?php echo $sub_path;?>/content/check_posts/' + moment(date_last_updated).format('YYYY-MM-DD HH:mm:ss') + '/<?php echo $thread['thread_id']; ?>', success: function(data) {
 
 			data = JSON.parse(data);
+			var posts = $('[data-post-id]').map(function(ind, ele) {
+				return parseInt($(ele).attr('data-post-id'));
+			}).toArray();
 			for(var i = 0; i < data.length; i++) {
-				var thread = data[i];
-				var thread_id = thread.thread_id;
+				var post = data[i];
+				var thread_id = post.thread_id;
 				var article = $('.post:nth-child(1)').clone();
-				article.find('img').prop('src', 'data:image/' + thread.content_type + ';base64,' + thread.image);
+				if(posts.indexOf(post.post_id) > -1) {
+					continue;
+				}
+				article.find('img').prop('src', 'data:image/' + post.content_type + ';base64,' + post.image);
 				article.find('[data-thread-id]').each(function() { $(this).attr('data-thread-id', thread_id); });
-				article.find('[data-post-id]').each(function() { $(this).attr('data-post-id', thread.post_id); });
-				article.find('p').html(thread.post_body.encode());
-				article.find('.replies').html(thread.num_posts);
+				article.find('[data-post-id]').each(function() { $(this).attr('data-post-id', post.post_id); });
+				article.find('p').html(post.post_body.encode());
+				article.find('.replies').html(post.num_posts);
 				// article.find('.date-posted').html(thread.num_posts);
-				article.find('.thread-link').prop('href', sub_path + '/content/thread/' + thread_id).html(thread.thread_name);
-				article.find('.account-link').prop('href', sub_path + '/account/profile/' + thread.account_id).html(thread.username);
-				article.find('.btnEditPost').prop('href', sub_path + '/content/edit_post/' + thread.thread_id + '/' + thread.post_id);
-				article.find('.date-posted').prop('href', sub_path + '/content/activity_by_date/' + moment(thread.date_created).format('YYYY-MM-DD HH:mm:ss')).html(thread.date_created);
+				article.find('.thread-link').prop('href', sub_path + '/content/thread/' + thread_id).html(post.thread_name);
+				article.find('.account-link').prop('href', sub_path + '/account/profile/' + post.account_id).html(post.username);
+				article.find('.btnEditPost').prop('href', sub_path + '/content/edit_post/' + post.thread_id + '/' + post.post_id);
+				article.find('.date-posted').prop('href', sub_path + '/content/activity_by_date/' + moment(post.date_created).format('YYYY-MM-DD HH:mm:ss')).html(post.date_created);
 				$('#posts').append(article);
 			}
-			if(data.length > 0) {
+			if(data.length > 0){
 				window.date_last_updated = new Date(moment().valueOf() + moment().utcOffset() * -60*1000);
 			}
 		}

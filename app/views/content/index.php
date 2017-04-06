@@ -51,7 +51,7 @@
 	$(document).ready(function() {
 		$('.btnRemoveThread').on('click', function(e) {
 			var thread_id = $(e.target).attr('data-thread-id');
-			$('[data-thread-id=' + thread_id + ']').closest('article').remove();
+			$('.btnRemoveThread[data-thread-id=' + thread_id + ']').closest('article').remove();
 			$.ajax({url: '/content/remove_thread/' + thread_id}).fail(function() {
 				alert('There was a problem removing the thread');
 			});
@@ -63,13 +63,19 @@
 	var sub_path = '<?php echo $sub_path; ?>';
 	var date_last_updated = new Date(moment().valueOf() + moment().utcOffset() * -60*1000);
 	window.setInterval(function() {
-		$.ajax({url: '<?php echo $sub_path;?>/content/check_thread/' + moment(date_last_updated).format('YYYY-MM-DD HH:mm:ss'), success: function(data) {
+		$.ajax({url: '<?php echo $sub_path;?>/content/check_thread/' + moment(window.date_last_updated).format('YYYY-MM-DD HH:mm:ss'), success: function(data) {
 
 			data = JSON.parse(data);
+			var threads = $('[data-thread-id]').map(function(int, ele) {
+				return parseInt($(ele).attr('data-thread-id'));
+			}).toArray();
 			for(var i = 0; i < data.length; i++) {
 				var thread = data[i];
 				var thread_id = thread.thread_id;
 				var article = $('.index-thread:nth-child(1)').clone();
+				if(threads.indexOf(thread.thread_id) > -1) {
+					continue;
+				}
 				article.hide();
 				article.find('[data-thread-id]').each(function() { $(this).attr('data-thread-id', thread_id); });
 				article.find('.replies').html(thread.num_posts);
@@ -79,7 +85,7 @@
 			}
 			if(data.length > 0) {
 				$('#new_threads_to_show').show();
-			window.date_last_updated = new Date(moment().valueOf() + moment().utcOffset() * -60*1000);
+				window.date_last_updated = new Date(moment().valueOf() + moment().utcOffset() * -60*1000);
 			}
 		}
 		})
