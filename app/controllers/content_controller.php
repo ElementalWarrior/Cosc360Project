@@ -77,7 +77,7 @@ class content_controller extends controller{
 		}
 
 		$dbh = $this->create_db_connection();
-		$stmt = $dbh->prepare('INSERT into threads(thread_name, thread_body, account_id) select :thread_title, :thread_body, :account_id');
+		$stmt = $dbh->prepare('INSERT into threads(thread_name, thread_body, account_id, date_updated) select :thread_title, :thread_body, :account_id, CURRENT_TIMESTAMP');
 		$stmt->execute(array(
 			':thread_title' => $thread_title,
 			':thread_body' => $thread_body,

@@ -215,6 +215,12 @@ main > * {
 	position: relative;
 	margin-left: 1rem;
 }
+@media(max-width: 767px){
+
+	#thread_articles article {
+		margin-left: 1.5rem;
+	}
+}
 .embed_posts {
 	padding-left: 2rem;
 }
