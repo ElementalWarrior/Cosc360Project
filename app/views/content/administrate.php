@@ -38,7 +38,7 @@ $daily_visitors = $view_data['daily_visitors']
 					</div>
 					<div class="stats">
 						<h2><?php echo (int)$stats['members_today']; ?></h2>
-						<span>Members Today</span>
+						<span>Members Registered Today</span>
 					</div>
 				</div>
 			</div>

@@ -20,7 +20,7 @@
 			<a href="<?php global $sub_path; echo $sub_path; ?>/account/profile/<?php echo $thread['account_id']; ?>" class="author"><?php echo Html::special_chars($thread['username']); ?></a>
 		</h3>
 		<p><?php echo Html::special_chars($thread['thread_body']); ?></p>
-		<a aria-label="View activity for <?php echo (new DateTime($thread['date_created']))->format('l F d, Y'); ?>" href="<?php echo $sub_path; ?>/content/activity_by_date/<?php echo (new DateTime($thread['date_created']))->format('Y-m-d'); ?>" class="date-posted"><?php echo $thread['date_created']; ?></a>
+		<a aria-label="View activity for <?php echo date_helper::convertFromUtc($thread['date_created'])->format('l F d, Y'); ?>" href="<?php echo $sub_path; ?>/content/activity_by_date/<?php echo date_helper::convertFromUtc($thread['date_created'])->format('Y-m-d'); ?>" class="date-posted"><?php echo date_helper::convertFromUtc($thread['date_created'])->format('Y-m-d H:i:s'); ?></a>
 	</section>
 	<section id="posts">
 		<?php foreach($posts as $post) { ?>
@@ -33,7 +33,7 @@
 				<a href="<?php global $sub_path; echo $sub_path; ?>/content/edit_post/<?php echo $thread['thread_id']; ?>/<?php echo $post['post_id']; ?>" class="btn-alt btn-small btnEditPost">Edit Post</a>
 				<button type="button" name="button" class="btn-alt btn-small btnRemovePost" data-thread-id="<?php echo $thread['thread_id']; ?>" data-post-id="<?php echo $post['post_id']; ?>">Remove Post</button>
 			<?php } ?>
-			<a aria-label="View activity for <?php echo (new DateTime($post['date_created']))->format('l F d, Y'); ?>" href="<?php echo $sub_path; ?>/content/activity_by_date/<?php echo (new DateTime($post['date_created']))->format('Y-m-d'); ?>" class="date-posted"><?php echo $post['date_created']; ?></a>
+			<a aria-label="View activity for <?php echo date_helper::convertFromUtc($post['date_created'])->format('l F d, Y'); ?>" href="<?php echo $sub_path; ?>/content/activity_by_date/<?php echo date_helper::convertFromUtc($post['date_created'])->format('Y-m-d'); ?>" class="date-posted"><?php echo date_helper::convertFromUtc($post['date_created'])->format('Y-m-d H:i:s'); ?></a>
 		</div>
 		<?php } ?>
 	</section>
@@ -85,7 +85,7 @@
     }));
 }
 	var sub_path = '<?php echo $sub_path; ?>';
-	var date_last_updated = new Date('<?php echo (new DateTime())->format('Y-m-d H:i:s'); ?>');
+	var date_last_updated = new Date(moment().valueOf() + moment().utcOffset() * -60*1000);
 	window.setInterval(function() {
 		$.ajax({url: '<?php echo $sub_path;?>/content/check_posts/' + moment(date_last_updated).format('YYYY-MM-DD HH:mm:ss') + '/<?php echo $thread['thread_id']; ?>', success: function(data) {
 
@@ -107,7 +107,7 @@
 				$('#posts').append(article);
 			}
 			if(data.length > 0) {
-				window.date_last_updated = new Date();
+				window.date_last_updated = new Date(moment().valueOf() + moment().utcOffset() * -60*1000);
 			}
 		}
 		})

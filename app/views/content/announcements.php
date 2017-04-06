@@ -24,7 +24,7 @@ $username = $row['username'];
 		<span>Author: </span><a class="a-alt" href="<?php echo "$sub_path/account/profile/$account_id"; ?>"><?php echo $username; ?></a>
 		<br><br>
 		<p><?php echo $row['announcement_body']; ?></p>
-		<a class="a-alt" href="<?php echo "$sub_path/content/activity_by_date/"; ?><?php echo (new DateTime($row['date_created']))->format('Y-m-d');?>" aria-label="View activity for <?php echo (new DateTime($row['date_created']))->format('l F d, Y'); ?>"><?php echo $row['date_created'];?></a>
+		<a class="a-alt" href="<?php echo "$sub_path/content/activity_by_date/"; ?><?php echo date_helper::convertFromUTC($row['date_created'])->format('Y-m-d');?>" aria-label="View activity for <?php echo date_helper::convertFromUTC($row['date_created'])->format('l F d, Y'); ?>"><?php echo date_helper::convertFromUTC($row['date_created'])->format('Y-m-d H:i:s');?></a>
 		<?php if(!empty($user['admin']) && $user['admin']) { ?>
 			<a href="<?php echo "$sub_path/content/remove_announcement/$announcement_id"; ?>" class="btnRemoveAnnouncement btn btn-small btn-alt">Remove</a>
 			<?php } ?>

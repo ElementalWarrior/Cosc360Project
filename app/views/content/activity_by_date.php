@@ -2,7 +2,7 @@
 global $sub_path;
 global $user;
 global $page_title;
-$page_title = "Activity By Date: " . $view_data['date'];
+$page_title = "Activity By Date: " . date_helper::convertFromUTC($view_data['date'])->format('Y-m-d');
 if(empty($view_data['date'])) {
 	$page_title = "Activity";
 }
@@ -53,7 +53,7 @@ foreach($view_data['results'] as $activity) {
 						echo 'data-action="' . $activity['action'] . '"';
 					} ?>
 					>
-						<td><?php echo (new DateTime($activity['date_created']))->format('Y-m-d H:i:s'); ?></td>
+						<td><?php echo date_helper::convertFromUTC($activity['date_created'])->format('Y-m-d H:i:s'); ?></td>
 						<?php if(!empty($user['admin']) && $user['admin']) { ?>
 							<td class="tdAction">
 								<?php echo $activity['action']; ?>

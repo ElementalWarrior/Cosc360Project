@@ -61,7 +61,7 @@
 
 <script type="text/javascript">
 	var sub_path = '<?php echo $sub_path; ?>';
-	var date_last_updated = new Date('<?php echo (new DateTime())->format('Y-m-d H:i:s'); ?>');
+	var date_last_updated = new Date(moment().valueOf() + moment().utcOffset() * -60*1000);
 	window.setInterval(function() {
 		$.ajax({url: '<?php echo $sub_path;?>/content/check_thread/' + moment(date_last_updated).format('YYYY-MM-DD HH:mm:ss'), success: function(data) {
 
@@ -79,7 +79,7 @@
 			}
 			if(data.length > 0) {
 				$('#new_threads_to_show').show();
-			window.date_last_updated = new Date();
+			window.date_last_updated = new Date(moment().valueOf() + moment().utcOffset() * -60*1000);
 			}
 		}
 		})

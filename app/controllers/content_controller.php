@@ -333,6 +333,11 @@ class content_controller extends controller{
 		if(empty($user['admin']) || !$user['admin']) {
 			return Html::render_action('file_not_found', 'error');
 		}
+		if(stripos($date, 'null') === 0) {
+			$date = null;
+		} else {
+			$date = date_helper::convertToUTC($date)->format('Y-m-d H:i:s');
+		}
 		$this->log_activity("view",null,null,true);
 		$dbh = $this->create_db_connection();
 		$stmt = $dbh->prepare(
@@ -361,6 +366,8 @@ class content_controller extends controller{
 		}
 		if(stripos($date, 'null') === 0) {
 			$date = null;
+		} else {
+			$date = date_helper::convertToUTC($date)->format('Y-m-d H:i:s');
 		}
 		$this->log_activity("view");
 		$dbh = $this->create_db_connection();
@@ -390,17 +397,35 @@ class content_controller extends controller{
 		}
 		$this->log_activity("view",null,null,true);
 		$dbh = $this->create_db_connection();
+		$now = new DateTime();
+		$now->setTime(0,0,0);
+		$now = date_helper::convertToUTC($now);
 		$stmt = $dbh->prepare(
-			"SELECT 'visitors_today' as metric, count(*) as value from (select 1 from activity_log where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') group by ip, username, user_agent) individ_users union all
+			"SELECT 'visitors_today' as metric, count(*) as value
+			from (
+				select 1 from activity_log
+				where date_created >= :now and date_created < DATE_ADD(:now, INTERVAL 1 DAY) and account_id is null group by ip, user_agent
+				union all
+				select 1 from activity_log
+				where date_created >= :now and date_created < DATE_ADD(:now, INTERVAL 1 DAY) and account_id is not null group by account_id
+			) individ_users union all
 
-			SELECT 'visitors_members_today' as metric, count(*) as value from (select 1 from activity_log where account_id is not null and date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') group by ip, username, user_agent) individ_users union all
+			SELECT 'visitors_members_today' as metric, count(*) as value
+			from (
+				select 1 from activity_log
+				where account_id is not null and date_created >= :now and date_created < DATE_ADD(:now, INTERVAL 1 DAY) group by account_id
+				) individ_users union all
 
 
-			SELECT  'visitors_daily_average' as metric, sum(visitors_day) / case when datediff(now(), min_date) = 0 then 1 else datediff(now(), min_date) end from (
-				SELECT count(*) as visitors_day, min_date, datediff(now(), min_date)
+			SELECT  'visitors_daily_average' as metric, sum(visitors_day) / case when datediff(:now, min_date) = 0 then 1 else datediff(:now, min_date) end from (
+				SELECT count(*) as visitors_day, min_date, datediff(:now, min_date)
 				from (
-					select 1 as value, date_format(date_created, '%Y-%m-%d') as day
-					from activity_log group by ip, username, user_agent, date_format(date_created, '%Y-%m-%d')
+
+						select 1, date_format(date_created, '%Y-%m-%d') as day from activity_log
+						where date_created >= :now and date_created < DATE_ADD(:now, INTERVAL 1 DAY) and account_id is null group by ip, user_agent, date_format(date_created, '%Y-%m-%d')
+						union all
+						select 1, date_format(date_created, '%Y-%m-%d') as day from activity_log
+						where date_created >= :now and date_created < DATE_ADD(:now, INTERVAL 1 DAY) and account_id is not null group by username, date_format(date_created, '%Y-%m-%d')
 				) individ_users,
 				(select min(date_created) as min_date from activity_log) min_date
 				group by day
@@ -408,16 +433,18 @@ class content_controller extends controller{
 
 			select 'members', count(*) from accounts union all
 
-			select 'members_today', count(*) from accounts where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') union all
+			select 'members_today', count(*) from accounts where date_created >= :now and date_created < DATE_ADD(:now, INTERVAL 1 DAY) union all
 
-			select 'threads_today', count(*) from threads where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') and date_deleted is null union all
+			select 'threads_today', count(*) from threads where date_created >= :now and date_created < DATE_ADD(:now, INTERVAL 1 DAY) and date_deleted is null union all
 
-			select 'posts_today', count(*) from posts where date_format(date_created, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d') and date_deleted is null union all
+			select 'posts_today', count(*) from posts where date_created >= :now and date_created < DATE_ADD(:now, INTERVAL 1 DAY) and date_deleted is null union all
 
 			select 'threads_total', count(*) from threads where date_deleted is null
 			"
 		);
-		$stmt->execute();
+		$stmt->execute(array(
+			':now' => $now->format('Y-m-d H:i:s')
+		));
 		$results = $stmt->fetchAll();
 
 		$stats = array();
@@ -442,7 +469,7 @@ class content_controller extends controller{
 	}
 	public function check_thread($date_last_updated) {
 
-		$date_last_updated = (new DateTime(urldecode($date_last_updated)))->format('Y-m-d H:i:s');
+		$date_last_updated = (new DateTime(gmDate(urldecode($date_last_updated))))->format('Y-m-d H:i:s');
 		$dbh = $this->create_db_connection();
 
 		$stmt = $dbh->prepare('SELECT *, username from threads join (select account_id, username from accounts) a on a.account_id = threads.account_id where date_created > :date_last_updated and date_deleted is null order by date_updated');
@@ -456,12 +483,13 @@ class content_controller extends controller{
 	}
 	public function check_posts($date_last_updated, $thread_id) {
 
-		$date_last_updated = (new DateTime(urldecode($date_last_updated)))->format('Y-m-d H:i:s');
+		$date_last_updated = (new DateTime(gmdate(urldecode($date_last_updated))))->format('Y-m-d H:i:s');
 		$dbh = $this->create_db_connection();
 
-		$stmt = $dbh->prepare('SELECT *, username, image, content_type from posts join (select account_id, username, image, content_type from accounts) a on a.account_id = posts.account_id where date_created > :date_last_updated and date_deleted is null order by date_created');
+		$stmt = $dbh->prepare('SELECT *, username, image, content_type from posts join (select account_id, username, image, content_type from accounts) a on a.account_id = posts.account_id where date_created > :date_last_updated and thread_id = :thread_id and date_deleted is null order by date_created');
 		$stmt->execute(array(
-			':date_last_updated' => $date_last_updated
+			':date_last_updated' => $date_last_updated,
+			':thread_id' => $thread_id
 		));
 		$results = $stmt->fetchAll();
 		for($i = 0; $i < count($results); $i++) {
