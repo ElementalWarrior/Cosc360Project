@@ -16,6 +16,7 @@ class controller {
 		$pass = DB_PASS;
 		$conn_string = "mysql:host=$host;port=$port;dbname=$db";
 		$dbh = new PDO($conn_string, $user, $pass);
+		$dbh->exec('set time_zone = \'+00:00\'');
 		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$dbh->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 		return $dbh;
