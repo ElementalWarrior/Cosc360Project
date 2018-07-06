@@ -4,10 +4,10 @@ Reddit clone using php. Built a simple MVC pattern without a framework as a lear
 
 Features:
  - Users can:
-  - Sign up
-  - Upload a logo
-  - Create threads
-  - Post thread replies
+    - Sign up
+    - Upload a logo
+    - Create threads
+    - Post thread replies
  - Admin can:
-  - CRUD users and threads/posts
-  - Post news on sidebar.
+    - CRUD users and threads/posts
+    - Post news on sidebar.
